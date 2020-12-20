@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_comandas">
+
+    <fragment
+        android:id="@+id/navigation_comandas"
+        android:name="br.com.alloy.comanditatendente.ui.comandas.ComandasFragment"
+        android:label="@string/title_comanda"
+        tools:layout="@layout/fragment_comandas" />
+
+    <fragment
+        android:id="@+id/navigation_pedidos"
+        android:name="br.com.alloy.comanditatendente.ui.pedidos.PedidosFragment"
+        android:label="@string/title_pedidos"
+        tools:layout="@layout/fragment_pedidos" />
+
+</navigation>

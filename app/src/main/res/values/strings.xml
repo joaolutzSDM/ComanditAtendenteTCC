@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ComanditAtendente</string>
+    <string name="title_comanda">Comandas</string>
+    <string name="title_pedidos">Pedidos</string>
+</resources>
