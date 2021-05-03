@@ -29,4 +29,6 @@ public interface ComanditAPI {
     @PUT("comanda/fechar")
     Call<List<Comanda>> consultarPorNumeroMesa(@Body Comanda comanda);
 
+
+
 }

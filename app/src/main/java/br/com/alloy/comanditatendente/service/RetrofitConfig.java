@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitConfig {
 
-    private ComanditAPI comanditAPI;
+    private final ComanditAPI comanditAPI;
 
     public RetrofitConfig(Context context) {
         comanditAPI = new Retrofit.Builder()

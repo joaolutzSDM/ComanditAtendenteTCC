@@ -3,4 +3,6 @@
     <string name="title_comanda">Comandas</string>
     <string name="title_pedidos">Pedidos</string>
     <string name="comandit_api_url">http://WORKSTATION:3311/comandit/api/</string>
+    <string name="table_image_icon">Ícone da mesa</string>
+    <string name="menu_icon_image">Ícone do menu</string>
 </resources>
