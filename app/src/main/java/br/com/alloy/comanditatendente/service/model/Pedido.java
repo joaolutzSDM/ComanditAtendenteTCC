@@ -70,6 +70,9 @@ public class Pedido implements Serializable {
     public BigDecimal getValorTotal() {
         return valorTotal;
     }
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
     public String getObservacaoPedido() {
         return observacaoPedido;
     }
