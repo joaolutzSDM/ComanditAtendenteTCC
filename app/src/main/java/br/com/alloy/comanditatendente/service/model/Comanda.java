@@ -21,6 +21,11 @@ public class Comanda implements Serializable {
         this.idComanda = idComanda;
     }
 
+    public Comanda(Integer idComanda, String senhaAcessoMobile) {
+        this.idComanda = idComanda;
+        this.senhaAcessoMobile = senhaAcessoMobile;
+    }
+
     public Integer getIdComanda() {
         return idComanda;
     }
