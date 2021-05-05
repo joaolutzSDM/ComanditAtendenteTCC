@@ -58,6 +58,22 @@ public class Comanda implements Serializable {
         this.horaAlteracao = horaAlteracao;
     }
 
+    /**
+     *
+     * @return o status da comanda - <b>true</b> para aberta, <b>false</b> para fechada
+     */
+    public boolean isOpen() {
+        return (numeroMesa != null);
+    }
+
+    /**
+     *
+     * @return
+     */
+//    public boolean hasOrders() {
+//        return (qtdPedidos != null && qtdPedidos > 0);
+//    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

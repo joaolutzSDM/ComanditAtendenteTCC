@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/comanda_card_margin"
+    android:layout_marginEnd="@dimen/comanda_card_margin"
+    card_view:cardCornerRadius="@dimen/comanda_card_radius"
+    card_view:cardUseCompatPadding="true"
+    android:clickable="true"
+    android:focusable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground">
+
+        <TextView
+            android:id="@+id/txvNrComanda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="3dp"
+            android:textColor="@color/comandaFechada"
+            android:text="@string/numero_comanda"
+            android:textAlignment="textStart"
+            android:textSize="@dimen/comanda_numero_text_size" />
+
+        <ImageView
+            android:id="@+id/imgvMesaComanda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:contentDescription="@string/mesaComanda"
+            android:cropToPadding="false"
+            android:paddingEnd="-5dp"
+            android:paddingStart="-5dp"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:src="@drawable/ic_table_black_24dp"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/txvNrMesa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/imgvMesaComanda"
+            android:layout_marginTop="7dp"
+            android:layout_marginStart="@dimen/comanda_numero_margin_img"
+            android:textSize="@dimen/comanda_numero_mesa_pedidos_text_size"
+            android:text="@string/itemNumeroMesa"
+            android:visibility="invisible"/>
+
+        <ImageView
+            android:id="@+id/imgvShoppingCart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/imgvMesaComanda"
+            android:contentDescription="@string/shoppingcart"
+            android:paddingEnd="-5dp"
+            android:paddingStart="-5dp"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:src="@drawable/ic_shopping_cart_black_24dp"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/txvQtdPedidos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/imgvMesaComanda"
+            android:layout_marginTop="39.5dp"
+            android:layout_marginStart="@dimen/comanda_numero_margin_img"
+            android:textSize="@dimen/comanda_numero_mesa_pedidos_text_size"
+            android:text="@string/itemQtdPedidos"
+            android:visibility="invisible"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -5,4 +5,9 @@
     <string name="comandit_api_url">http://WORKSTATION:3311/comandit/api/</string>
     <string name="table_image_icon">Ícone da mesa</string>
     <string name="menu_icon_image">Ícone do menu</string>
+    <string name="numero_comanda">999</string>
+    <string name="mesaComanda">99</string>
+    <string name="itemNumeroMesa">99</string>
+    <string name="shoppingcart">shoppingCart</string>
+    <string name="itemQtdPedidos">99</string>
 </resources>
