@@ -13,10 +13,12 @@ public class ComandasViewModel extends ViewModel {
 
     private MutableLiveData<List<Comanda>> comandas;
     private MutableLiveData<Comanda> comanda;
+    private MutableLiveData<Integer> mesa;
 
     public ComandasViewModel() {
         comandas = new MutableLiveData<>();
         comanda = new MutableLiveData<>();
+        mesa = new MutableLiveData<>();
     }
 
     public LiveData<List<Comanda>> getComandas() {
@@ -38,6 +40,18 @@ public class ComandasViewModel extends ViewModel {
 
     public void setComanda(Comanda comanda) {
         this.comanda.setValue(comanda);
+    }
+
+    public LiveData<Integer> getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(Integer mesa) {
+        this.mesa.setValue(mesa);
+    }
+
+    public boolean isMesaSelected() {
+        return mesa.getValue() != null;
     }
 
 }

@@ -10,4 +10,93 @@
     <string name="itemNumeroMesa">99</string>
     <string name="shoppingcart">shoppingCart</string>
     <string name="itemQtdPedidos">99</string>
+    <string name="filtrar_comandas">Filtrar comandas</string>
+    <string name="api_exception">Erro interno da API</string>
+
+    <array name="comandaFilters">
+        <item>Todas</item>
+        <item>Abertas</item>
+        <item>Fechadas</item>
+        <item>Por mesa</item>
+    </array>
+
+    <array name="comandaManagement">
+        <item>Mudar mesa</item>
+        <item>Ver senha de acesso</item>
+        <item>Compartilhar senha de acesso</item>
+        <item>Gerar QR Code da senha de acesso</item>
+    </array>
+
+    <!-- Gerenciamento de Comandas -->
+    <string name="menu_comanda">Filtrar comandas</string>
+    <string name="comanda_gerenciar_item_cupom_fiscal">Ver Cupom Não Fiscal</string>
+    <string name="comanda_gerenciar_item_fechar">Fechar Comanda</string>
+    <string name="comanda_gerenciar_sam">Senha de acesso mobile: %s</string>
+    <string name="comanda_share_sam_title">Escolha a forma de envio</string>
+    <string name="comanda_share_sam_subject">Comandit | Senha de acesso mobile | Comanda %d</string>
+    <string name="troca_mesa_sucesso">Mesa alterada com sucesso</string>
+
+    <!-- Dialogs -->
+    <string name="title_dialog_comanda_gerenciar">Gerenciar Comanda %d</string>
+    <string name="title_dialog_comanda_selecionar_mesa">Selecionar Mesa</string>
+    <string name="title_dialog_comanda_sam_qrcode">QR Code de Acesso do Cliente</string>
+    <string name="message_dialog_comanda_sam_qrcode">Comanda %d</string>
+    <string name="title_dialog_pedido_cadastrar">Cadastrar Pedido</string>
+    <string name="title_dialog_pedido_gerenciar">Gerenciar Pedido</string>
+    <string name="title_dialog_pedido_cancelar">Cancelar Pedido</string>
+    <string name="title_dialog_pedido_transferir">Transferir Pedido</string>
+
+    <!-- Cupom Fiscal -->
+    <string name="title_activity_cupom_fiscal">Cupom Não Fiscal</string>
+    <string name="cf_pdf_file_name">Cupom Não Fiscal - Comanda %d</string>
+    <string name="cf_share_no_sdk_support">Operação permitida somente para dispositivos com Android 4.4 (KitKat) ou superior.</string>
+
+    <!-- Gerenciamento de Pedidos -->
+    <string name="produto_desc_pedido_dialog">%d - %s</string>
+    <string name="txvDialogQtd">Quantidade</string>
+    <string name="txvDialogObs">Observação</string>
+
+    <!-- Dialog Buttons -->
+    <string name="btnOK">OK</string>
+    <string name="btnCancelar">Cancelar</string>
+    <string name="btnTransferir">Transferir</string>
+    <string name="btnVoltar">Voltar</string>
+    <string name="btnSim">Sim</string>
+    <string name="btnNao">Não</string>
+
+    <!-- Login -->
+    <string name="msgEmptyPassword">Informe a senha</string>
+    <string name="msgInvalidPassword">A senha informada é inválida.</string>
+
+    <!-- Gerenciamento de Comandas -->
+    <string name="msgComandaFechada">Comanda fechada</string>
+    <string name="msgConfirmFecharComanda">Confirma o fechamento da comanda</string>
+    <string name="msgQuantidadeComandas">Comandas encontradas: %d</string>
+    <string name="msgEmptyListComandas">Nenhuma comanda encontrada</string>
+    <string name="msgSelecionarMesa">Selecione uma mesa</string>
+    <string name="msgSelecionarMesaDestino">Selecione a mesa de destino</string>
+    <string name="msgMesaSelecionada">Mesa selecionada: %d</string>
+    <string name="msgErroQRCode">Ocorreu um erro ao gerar o QR Code.</string>
+
+    <!-- Gerenciamento de Pedidos -->
+    <string name="msgSelecionarComanda">Selecione uma comanda</string>
+    <string name="msgSelecionarCategoriaProduto">Selecione uma categoria de produto</string>
+    <string name="msgSemProdutosCategoria">Não há produtos nessa categoria.</string>
+    <string name="pedidos_comanda_title">Pedidos - %d</string>
+    <string name="msgPedidoCadastradoSucesso">Pedido cadastrado com sucesso</string>
+    <string name="msgQuantidadePedidos">Pedidos encontrados: %d</string>
+    <string name="msgEmptyListPedidos">Nenhum pedido encontrado</string>
+    <string name="msgConfirmCancelPedido">Confirma o cancelamento do pedido?</string>
+    <string name="msgComandaDestinoTransferencia">Selecione a comanda de destino do pedido</string>
+    <string name="msgPedidoCanceladoSucesso">Pedido cancelado com sucesso</string>
+    <string name="msgPedidoTransferidoSucesso">Pedido transferido com sucesso</string>
+    <string name="msgPedidoComandaSelecionadaDifere">A comanda do pedido difere da comanda selecionada.</string>
+    <string name="msgPedidoSemHistorico">Não é possível transferir um pedido sem histórico.</string>
+    <string name="msgPedidoComandasIguaisSelecionadas">Selecione uma comanda diferente da comanda de origem do pedido.</string>
+    <string name="produtoIndisponivel">Indisponível</string>
+    <string name="msgProdutoIndisponivel">Produto indisponível</string>
+    <string name="sinal_menos">-</string>
+    <string name="sinal_mais">+</string>
+    <string name="quantidade_inicial">1</string>
+
 </resources>

@@ -2,6 +2,7 @@ package br.com.alloy.comanditatendente.service.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.StringJoiner;
 
 public class Comanda implements Serializable {
 
@@ -94,6 +95,13 @@ public class Comanda implements Serializable {
         if (idComanda == null) {
             return other.idComanda == null;
         } else return idComanda.equals(other.idComanda);
+    }
+
+    /**
+     * @return string do código para geração de QR CODE no app Comandit Atendente
+     */
+    public String getQRCodeString() {
+        return "Comandit-" + idComanda.toString() + "-" + senhaAcessoMobile;
     }
 
 }

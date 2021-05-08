@@ -5,6 +5,11 @@ public class MesaAlt {
     private int mesaOrigem;
     private int mesaDestino;
 
+    public MesaAlt(int mesaOrigem, int mesaDestino) {
+        this.mesaOrigem = mesaOrigem;
+        this.mesaDestino = mesaDestino;
+    }
+
     /**
      * @return the mesaOrigem
      */

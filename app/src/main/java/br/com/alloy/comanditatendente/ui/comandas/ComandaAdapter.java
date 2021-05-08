@@ -55,7 +55,7 @@ public class ComandaAdapter extends ArrayAdapter<Comanda> {
         binding.txvNrComanda.setText(String.format(Locale.getDefault(),"%d", comanda.getIdComanda()));
 
         if (comanda.isOpen()) {
-            //TODO Ponto de verificação futura, melhoria para API >= 23 (atual é 19)
+            //TODO Ponto de verificação futura, melhoria para API >= 23 (atual é 21)
             //holder.txvNumeroComanda.setTextAppearance(R.style.comandaAberta);
             binding.txvNrComanda.setTextColor(context.getResources().getColor(R.color.colorPrimary));
             binding.txvNrComanda.setTypeface(null, Typeface.BOLD);
@@ -67,7 +67,7 @@ public class ComandaAdapter extends ArrayAdapter<Comanda> {
                     binding.imgvShoppingCart, binding.txvQtdPedidos);
             //convertView.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary));
         } else {
-            //TODO Ponto de verificação futura, melhoria para API >= 23 (atual é 19)
+            //TODO Ponto de verificação futura, melhoria para API >= 23 (atual é 21)
             //binding.txvNumeroComanda.setTextAppearance(R.style.comandaFechada);
             binding.txvNrComanda.setTextColor(context.getResources().getColor(R.color.comandaFechada));
             binding.txvNrComanda.setTypeface(null, Typeface.NORMAL);

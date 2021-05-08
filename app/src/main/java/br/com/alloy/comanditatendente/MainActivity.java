@@ -13,6 +13,7 @@ import androidx.navigation.ui.NavigationUI;
 import java.util.Objects;
 
 import br.com.alloy.comanditatendente.databinding.ActivityMainBinding;
+import br.com.alloy.comanditatendente.service.RetrofitConfig;
 import br.com.alloy.comanditatendente.ui.comandas.ComandasViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
         ComandasViewModel comandaViewModel = new ViewModelProvider(this).get(ComandasViewModel.class);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_comandas, R.id.navigation_pedidos).build();
+//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+//                R.id.navigation_comandas, R.id.navigation_pedidos).build();
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();

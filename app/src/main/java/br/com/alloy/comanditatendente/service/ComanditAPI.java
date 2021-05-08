@@ -7,7 +7,6 @@ import br.com.alloy.comanditatendente.service.model.MesaAlt;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
@@ -25,16 +24,16 @@ public interface ComanditAPI {
     Call<List<Comanda>> consultarComandasFechadas();
 
     @GET("comanda/consultar/mesa/{mesa}")
-    Call<List<Comanda>> consultarPorNumeroMesa(@Path("mesa") Integer mesa);
+    Call<List<Comanda>> consultarComandasMesa(@Path("mesa") Integer mesa);
 
     @PUT("comanda/abrir")
-    Call<List<Comanda>> abrirComanda(@Body Comanda comanda);
+    Call<Comanda> abrirComanda(@Body Comanda comanda);
 
     @PUT("comanda/fechar")
-    Call<List<Comanda>> fecharComanda(@Body Comanda comanda);
+    Call<Comanda> fecharComanda(@Body Comanda comanda);
 
     @PUT("comanda/alterarMesa")
-    Call<List<Comanda>> alterarMesa(@Body MesaAlt mesaAlt);
+    Call<String> alterarMesa(@Body MesaAlt mesaAlt);
 
     //-----Configuração-----
 
