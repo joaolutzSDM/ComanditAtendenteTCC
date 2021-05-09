@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         //instancia o ViewModel da comanda na classe MainActivity para estar assessível em nas telas filhas do app
         ComandasViewModel comandaViewModel = new ViewModelProvider(this).get(ComandasViewModel.class);
+        RetrofitConfig.initiateRetrofitAPI(this);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 //        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
