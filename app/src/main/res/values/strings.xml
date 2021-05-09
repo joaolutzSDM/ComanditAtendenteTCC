@@ -98,5 +98,10 @@
     <string name="sinal_menos">-</string>
     <string name="sinal_mais">+</string>
     <string name="quantidade_inicial">1</string>
+    <string name="rlNomeProduto">Nome Produto</string>
+    <string name="rlCodigoProduto">Código do Produto</string>
+    <string name="rlPedidoQtdProduto">Qtde pedido</string>
+    <string name="rlPedidoObservacao">Observação pedido</string>
+    <string name="rlPrecoProduto">Preço Produto</string>
 
 </resources>

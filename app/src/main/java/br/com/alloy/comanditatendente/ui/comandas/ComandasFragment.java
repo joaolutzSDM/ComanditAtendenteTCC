@@ -258,7 +258,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
 //                        i.putExtra("comanda", comanda);
 //                        startActivity(i);
                     } else if(options.get(which).equals(getString(R.string.comanda_gerenciar_item_fechar))) { //Fechar Comanda
-                        //getComandaAsync().execute(new ParamResult(AsyncMethod.FECHAR_COMANDA, comanda));
+                        RetrofitConfig.getComanditAPI(getContext()).fecharComanda(comanda).enqueue(callBackComandaUpdate);
                     }
                     break;
             }
@@ -279,7 +279,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

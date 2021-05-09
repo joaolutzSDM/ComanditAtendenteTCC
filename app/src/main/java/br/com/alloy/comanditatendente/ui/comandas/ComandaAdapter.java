@@ -42,15 +42,17 @@ public class ComandaAdapter extends ArrayAdapter<Comanda> {
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ComandaItemBinding binding;
+        Comanda comanda = getItem(position);
+
         if(convertView == null) {
             binding = ComandaItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             convertView = binding.getRoot();
+            convertView.setOnClickListener((View v) -> listener.comandaClicked(comanda));
+            convertView.setOnLongClickListener((View v) -> listener.comandaLongClicked(comanda));
             convertView.setTag(binding);
         } else {
             binding = (ComandaItemBinding) convertView.getTag();
         }
-
-        Comanda comanda = getItem(position);
 
         binding.txvNrComanda.setText(String.format(Locale.getDefault(),"%d", comanda.getIdComanda()));
 
@@ -77,8 +79,8 @@ public class ComandaAdapter extends ArrayAdapter<Comanda> {
             //convertView.setBackgroundColor(getContext().getResources().getColor(R.color.white));
         }
 
-        convertView.setOnClickListener((View v) -> listener.comandaClicked(comanda));
-        convertView.setOnLongClickListener((View v) -> listener.comandaLongClicked(comanda));
+//        convertView.setOnClickListener((View v) -> listener.comandaClicked(comanda));
+//        convertView.setOnLongClickListener((View v) -> listener.comandaLongClicked(comanda));
 
         return convertView;
     }
