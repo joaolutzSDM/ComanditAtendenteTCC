@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/txvDialogNomeProduto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/dialog_pedido_margin_start"
+        android:text="@string/rlNomeProduto"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <include
+        android:id="@+id/include_quantidade"
+        layout="@layout/seletor_quantidade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/seletor_quantidade_margin_top"
+        android:layout_marginStart="@dimen/dialog_pedido_margin_start"
+        android:layout_below="@id/txvDialogNomeProduto"/>
+
+    <EditText
+        android:id="@+id/edtDialogObs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/include_quantidade"
+        android:layout_marginTop="@dimen/item_margin_start_end"
+        android:ems="10"
+        android:hint="@string/txvDialogObs"
+        android:inputType="textCapCharacters"
+        android:maxLength="100" />
+
+</RelativeLayout>

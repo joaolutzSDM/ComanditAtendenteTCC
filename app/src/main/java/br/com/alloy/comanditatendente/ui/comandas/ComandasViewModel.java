@@ -14,6 +14,7 @@ public class ComandasViewModel extends ViewModel {
     private MutableLiveData<List<Comanda>> comandas;
     private MutableLiveData<Comanda> comanda;
     private MutableLiveData<Integer> mesa;
+    private CharSequence[] mesas;
 
     public ComandasViewModel() {
         comandas = new MutableLiveData<>();
@@ -56,6 +57,14 @@ public class ComandasViewModel extends ViewModel {
 
     public boolean isMesaSelected() {
         return mesa.getValue() != null;
+    }
+
+    public CharSequence[] getMesas() {
+        return mesas;
+    }
+
+    public void setMesas(CharSequence[] mesas) {
+        this.mesas = mesas;
     }
 
 }

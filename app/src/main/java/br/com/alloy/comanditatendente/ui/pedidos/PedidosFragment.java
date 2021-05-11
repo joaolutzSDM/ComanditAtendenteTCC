@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -17,11 +18,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 import br.com.alloy.comanditatendente.R;
+import br.com.alloy.comanditatendente.databinding.DialogPedidoBinding;
 import br.com.alloy.comanditatendente.databinding.FragmentPedidosBinding;
+import br.com.alloy.comanditatendente.databinding.SeletorQuantidadeBinding;
 import br.com.alloy.comanditatendente.service.RetrofitConfig;
 import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
@@ -31,6 +35,7 @@ import br.com.alloy.comanditatendente.service.model.Produto;
 import br.com.alloy.comanditatendente.service.model.ProdutoCategoria;
 import br.com.alloy.comanditatendente.ui.Messages;
 import br.com.alloy.comanditatendente.ui.comandas.ComandasViewModel;
+import br.com.alloy.comanditatendente.ui.util.StringUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -84,9 +89,9 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         });
     }
 
-    private Callback<List<Pedido>> callBackPedidoUpdate = new Callback<List<Pedido>>() {
+    private Callback<Pedido> callBackPedidoUpdate = new Callback<Pedido>() {
         @Override
-        public void onResponse(Call<List<Pedido>> call, Response<List<Pedido>> response) {
+        public void onResponse(Call<Pedido> call, Response<Pedido> response) {
             if(response.isSuccessful()) {
 
             } else {
@@ -95,7 +100,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         }
 
         @Override
-        public void onFailure(Call<List<Pedido>> call, Throwable t) {
+        public void onFailure(Call<Pedido> call, Throwable t) {
             Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -156,33 +161,38 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     @Override
     public void produtoClicked(Produto produto) {
-
+        if(!produto.getDisponivel()) { //verifica se o produto está disponível
+            Toast.makeText(getContext(), getString(R.string.msgProdutoIndisponivel), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!comandasViewModel.isComandaSelected()) { //verifica se existe uma comanda selecionada
+            Toast.makeText(getContext(), getString(R.string.msgSelecionarComanda), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        showConfirmPedidoDialog(produto);
     }
 
     @Override
     public void pedidoClicked(Pedido pedido) {
-
+        showManagePedidoDialog(pedido);
     }
 
     private void showConfirmPedidoDialog(final Produto produto) {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialoglayout_pedido, null);
-
-        PedidoDialogHolder holder = new PedidoDialogHolder(dialogView);
+        DialogPedidoBinding dialogPedidoBinding = DialogPedidoBinding.inflate(LayoutInflater.from(getContext()));
+        SeletorQuantidadeBinding seletorQuantidadeBinding = SeletorQuantidadeBinding.inflate(LayoutInflater.from(getContext()));
+        PedidoDialogHolder holder = new PedidoDialogHolder(seletorQuantidadeBinding);
 
         //seta os dados do produto selecionado
-        holder.txvDialogNomeProduto.setText(String.format(Locale.getDefault(),
-                getString(R.string.produto_desc_pedido_dialog),
-                produto.getIdProduto(),
-                produto.getNomeProduto()));
+        dialogPedidoBinding.txvDialogNomeProduto.setText(String.format(Locale.getDefault(),
+                getString(R.string.produto_desc_pedido_dialog), produto.getIdProduto(), produto.getNomeProduto()));
 
         final AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_cadastrar), null);
-        dialog.setView(dialogView, 10,20,10,5);
+        dialog.setView(dialogPedidoBinding.getRoot(), 10,20,10,5);
         dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
-            Pedido pedido = new Pedido(comandaSelecionada, produto, holder.getQuantidade());
-            String obs = holder.edtDialogObs.getText().toString();
+            Pedido pedido = new Pedido(comandasViewModel.getComanda().getValue(), produto, holder.getQuantidade());
+            String obs = dialogPedidoBinding.edtDialogObs.getText().toString();
             if(!StringUtil.isEmptyString(obs)) { pedido.setObservacaoPedido(obs); }
-            getPedidoAsync().execute(new ParamResult(AsyncMethod.CADASTRAR_PEDIDO, pedido));
+            //getPedidoAsync().execute(new ParamResult(AsyncMethod.CADASTRAR_PEDIDO, pedido));
         });
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnCancelar), (dialog2, which) -> dialog2.dismiss());
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -211,7 +221,8 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
     private void showCancelPedidoDialog(final Pedido pedido) {
         AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_cancelar),
                 getString(R.string.msgConfirmCancelPedido));
-        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnSim), (dialog1, which) -> getPedidoAsync().execute(new ParamResult(AsyncMethod.CANCELAR_PEDIDO, pedido)));
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnSim),
+                (dialog1, which) -> RetrofitConfig.getComanditAPI(getContext()).cancelarPedido(pedido).enqueue(callBackPedidoUpdate));
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnNao), (dialog2, which) -> dialog2.dismiss());
         dialog.show();
     }
@@ -222,15 +233,14 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         final Spinner spnComandasAbertas = new Spinner(getContext());
         List<Comanda> comandasMesa = getComandasMesa(comandasViewModel.getComanda().getValue().getNumeroMesa());
         if (comandasMesa != null) {
-            spnComandasAbertas.setAdapter(new ArrayAdapter<Comanda>(this, R.layout.produto_categoria_item, comandasMesa));
+            spnComandasAbertas.setAdapter(new ArrayAdapter<>(getContext(), R.layout.produto_categoria_item, comandasMesa));
             dialog.setView(spnComandasAbertas, 10,20,10,5);
             dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
                 Comanda comandaDestino = (Comanda) spnComandasAbertas.getSelectedItem();
                 if (!comandaDestino.equals(pedido.getComanda())) {
-
-                    pedido.setIdPedido(pedido.getComanda().getIdComanda()); //recupera a comanda origem do pedido
+                    pedido.setItem(pedido.getComanda().getIdComanda()); //recupera a comanda origem do pedido
                     pedido.setComanda(comandaDestino); //seta a comanda destino do pedido
-                    //getPedidoAsync().execute(new ParamResult(AsyncMethod.TRANSFERIR_PEDIDO, pedido));
+                    RetrofitConfig.getComanditAPI(getContext()).transferirPedido(pedido).enqueue(callBackPedidoUpdate);
                 } else {
                     Messages.showDialogMessage(getContext(), getString(R.string.msgPedidoComandasIguaisSelecionadas));
                 }
@@ -244,11 +254,20 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     private List<Comanda> getComandasMesa(Integer mesa) {
         try {
-            ParamResult result = getComandaAsync().execute(new ParamResult(AsyncMethod.CONSULTAR_COMANDAS_POR_MESA, mesa)).get();
-            return result.getResult() != null ? (List<Comanda>) result.getResult() : null;
-        } catch (InterruptedException | ExecutionException ex) {
+            return RetrofitConfig.getComanditAPI(getContext()).consultarComandasMesa(mesa).execute().body();
+        } catch (IOException e) {
             return null;
         }
+    }
+
+    private CharSequence[] getMesasArray(int qtdMesas) {
+        if(comandasViewModel.getMesas() == null) {
+            comandasViewModel.setMesas(new CharSequence[qtdMesas]);
+            for(int i = 0; i < qtdMesas;i++) {
+                comandasViewModel.getMesas()[i] = String.valueOf(i + 1);
+            }
+        }
+        return comandasViewModel.getMesas();
     }
 
     private AlertDialog createGenericDialog(String title, String message){

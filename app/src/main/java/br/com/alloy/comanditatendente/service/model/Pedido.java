@@ -3,6 +3,8 @@ package br.com.alloy.comanditatendente.service.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.alloy.comanditatendente.ui.util.StringUtil;
+
 public class Pedido implements Serializable {
 
     /**
@@ -86,6 +88,14 @@ public class Pedido implements Serializable {
         this.pedidoHistorico = pedidoHistorico;
     }
 
+    /**
+     *
+     * @return
+     */
+    public boolean comHistorico() {
+        return pedidoHistorico != null;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -113,6 +123,21 @@ public class Pedido implements Serializable {
         return "Pedido [item=" + item + ", idPedido=" + idPedido + ", comanda=" + comanda + ", produto=" + produto
                 + ", quantidadePedido=" + quantidadePedido + ", valorPedido=" + valorPedido + ", valorTotal="
                 + valorTotal + ", observacaoPedido=" + observacaoPedido + ", pedidoHistorico=" + pedidoHistorico + "]";
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String toStringResumo() {
+        String retorno = "Comanda: " + comanda.getIdComanda().toString()
+                + StringUtil.NEW_LINE + produto.getIdProduto().toString()
+                + " - " + produto.getNomeProduto()
+                + StringUtil.NEW_LINE + "Qtd: " + getQuantidadePedido().toString();
+        if (getObservacaoPedido() != null) {
+            retorno += StringUtil.NEW_LINE + "Obs: " + getObservacaoPedido();
+        }
+        return retorno;
     }
 
 }
