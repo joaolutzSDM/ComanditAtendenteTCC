@@ -32,10 +32,8 @@ import retrofit2.Response;
 
 public class CupomFiscalActivity extends AppCompatActivity {
 
-    private ProgressDialog progressDialog;
-    private String htmlCupomFiscal;
-
     private ActivityCupomFiscalBinding binding;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +95,7 @@ public class CupomFiscalActivity extends AppCompatActivity {
             public void onResponse(Call<String> call, Response<String> response) {
                 progressDialog.dismiss();
                 if(response.isSuccessful()) {
-                    htmlCupomFiscal = response.body();
-                    binding.wvCupomFiscal.loadDataWithBaseURL(null, htmlCupomFiscal, "text/html", "UTF-8", null);
+                    binding.wvCupomFiscal.loadDataWithBaseURL(null, response.body(), "text/html", "UTF-8", null);
                 } else {
                     showAPIException(ExceptionUtils.parseException(response));
                 }

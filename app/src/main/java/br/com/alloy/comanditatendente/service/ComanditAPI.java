@@ -11,6 +11,9 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -56,15 +59,18 @@ public interface ComanditAPI {
 
     // -----Pedidos-----
 
+    @Headers("action: save")
     @POST("pedido/cadastrar")
     Call<Pedido> cadastrarPedido(@Body Pedido pedido);
 
     @POST("pedido/consultar/comanda/resumo")
     Call<List<Pedido>> consultarPedidosComandaResumo(@Body Comanda comanda);
 
+    @Headers("action: cancel")
     @DELETE("pedido/cancelar")
     Call<Pedido> cancelarPedido(@Body Pedido pedido);
 
+    @Headers("action: transfer")
     @PUT("pedido/transferir")
     Call<Pedido> transferirPedido(@Body Pedido pedido);
 

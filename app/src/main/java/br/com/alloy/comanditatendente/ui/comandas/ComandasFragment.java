@@ -43,6 +43,7 @@ import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.MesaAlt;
 import br.com.alloy.comanditatendente.ui.Messages;
+import br.com.alloy.comanditatendente.ui.cupomfiscal.CupomFiscalActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,6 +58,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentComandasBinding.inflate(inflater, container, false);
         comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
+        bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
         return binding.getRoot();
     }
 
@@ -74,7 +76,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         //comanda selecionada
         comandasViewModel.getComanda().observe(getViewLifecycleOwner(), comanda -> {
             //vai para a tela de pedidos com a comanda atual selecionada
-            bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos).setTitle(String.format(
+            bottomNavigationView.getMenu().findItem(R.id.navigation_menu_pedidos).setTitle(String.format(
                     getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
             //bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
 
@@ -84,8 +86,25 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         comandasViewModel.getMesa().observe(getViewLifecycleOwner(), mesa -> {
             binding.fabSelecionarMesa.setImageBitmap(textAsBitmap(mesa.toString()));
         });
+        //TODO - Recuperar quantidade de mesas da API
+        comandasViewModel.setQtdMesas(30);
+        binding.fabSelecionarMesa.setOnClickListener(v -> {
+            showListDialog(getString(R.string.msgSelecionarMesa), getMesasArray(comandasViewModel.getQtdMesas()), null, (dialog, which) -> {
+                comandasViewModel.setMesa(which + 1);
+            });
+        });
         //setting loadData as the method for the swipe down refresh layout
         binding.swipeRefreshComandas.setOnRefreshListener(() -> carregarComandas(ComandaFilter.TODAS));
+    }
+
+    private CharSequence[] getMesasArray(int qtdMesas) {
+        if(comandasViewModel.getMesas() == null) {
+            comandasViewModel.setMesas(new CharSequence[qtdMesas]);
+            for(int i = 0; i < qtdMesas;i++) {
+                comandasViewModel.getMesas()[i] = String.valueOf(i + 1);
+            }
+        }
+        return comandasViewModel.getMesas();
     }
 
     private Bitmap textAsBitmap(String text) {
@@ -167,7 +186,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
                 RetrofitConfig.getComanditAPI(getContext()).consultarComandasFechadas().enqueue(callBackComandas);
                 break;
             case POR_MESA:
-                RetrofitConfig.getComanditAPI(getContext()).consultarComandasMesa(comandasViewModel.getMesa().getValue()).enqueue(callBackComandas);
+                RetrofitConfig.getComanditAPI(getContext()).consultarComandasMesa(comandasViewModel.getMesaValue()).enqueue(callBackComandas);
                 break;
         }
     }
@@ -254,9 +273,9 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
                     break;
                 case 4:
                     if(options.get(which).equals(getString(R.string.comanda_gerenciar_item_cupom_fiscal))) { //Ver Cupom Fiscal
-//                        Intent i = new Intent(this, CupomFiscalActivity.class);
-//                        i.putExtra("comanda", comanda);
-//                        startActivity(i);
+                        Intent i = new Intent(getContext(), CupomFiscalActivity.class);
+                        i.putExtra("comanda", comanda);
+                        startActivity(i);
                     } else if(options.get(which).equals(getString(R.string.comanda_gerenciar_item_fechar))) { //Fechar Comanda
                         RetrofitConfig.getComanditAPI(getContext()).fecharComanda(comanda).enqueue(callBackComandaUpdate);
                     }
@@ -266,7 +285,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
     }
 
     private void alterarMesa(Comanda comanda) {
-        MesaAlt mesaAlt = new MesaAlt(comanda.getNumeroMesa(), comandasViewModel.getMesa().getValue());
+        MesaAlt mesaAlt = new MesaAlt(comanda.getNumeroMesa(), comandasViewModel.getMesaValue());
         RetrofitConfig.getComanditAPI(getContext()).alterarMesa(mesaAlt).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

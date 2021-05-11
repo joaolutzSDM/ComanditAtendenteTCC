@@ -46,4 +46,8 @@ public class PedidosViewModel extends ViewModel {
         this.categorias.setValue(categorias);
     }
 
+    public List<ProdutoCategoria> getCategoriasValue() {
+        return categorias.getValue();
+    }
+
 }

@@ -113,5 +113,6 @@
     <string name="rlPedidoQtdProduto">Qtde pedido</string>
     <string name="rlPedidoObservacao">Observação pedido</string>
     <string name="rlPrecoProduto">Preço Produto</string>
+    <string name="consultar_pedidos">Consultar pedidos da comanda</string>
 
 </resources>

@@ -4,6 +4,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -21,6 +24,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import br.com.alloy.comanditatendente.R;
 import br.com.alloy.comanditatendente.databinding.DialogPedidoBinding;
@@ -74,6 +78,11 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         pedidosViewModel.getPedidos().observe(getViewLifecycleOwner(), pedidos -> {
             binding.rcvPedidosProdutos.setAdapter(new PedidoAdapter(pedidos, this));
         });
+        binding.fabSelecionarCategoriaProduto.setOnClickListener(v -> {
+            showListDialog(getString(R.string.msgSelecionarCategoriaProduto), null, null, (dialog, which) -> {
+                carregarProdutos(pedidosViewModel.getCategoriasValue().get(which));
+            });
+        });
         //setting loadData as the method for the swipe down refresh layout
         binding.swipeRefreshPedidos.setOnRefreshListener(() -> {
             if (binding.rcvPedidosProdutos.getAdapter() instanceof ProdutoAdapter) { //se o adapter de produtos estiver ativo
@@ -89,11 +98,39 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         });
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_pedidos, menu);
+        //remove os dois últimos itens do menu
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getOrder() == 1) { //Comandas Filter
+            carregarPedidos();
+            return true;
+        }
+        return false;
+    }
+
     private Callback<Pedido> callBackPedidoUpdate = new Callback<Pedido>() {
         @Override
         public void onResponse(Call<Pedido> call, Response<Pedido> response) {
             if(response.isSuccessful()) {
-
+                String msg = "";
+                switch(Objects.requireNonNull(call.request().header("action"))) {
+                    case "save":
+                        msg = getString(R.string.msgPedidoCadastradoSucesso);
+                        break;
+                    case "cancel":
+                        msg = getString(R.string.msgPedidoCanceladoSucesso);
+                        break;
+                    case "transfer":
+                        msg = getString(R.string.msgPedidoTransferidoSucesso);
+                }
+                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
             } else {
                 showAPIException(ExceptionUtils.parseException(response));
             }
@@ -104,6 +141,17 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
             Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    private void showListDialog(String title, @Nullable CharSequence[] items, @Nullable Integer listResId, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(title);
+        if(items != null) {
+            builder.setItems(items, listener);
+        } else if(listResId != null) {
+            builder.setItems(listResId, listener);
+        }
+        builder.show();
+    }
 
     private void carregarCategorias() {
         if(pedidosViewModel.getCategorias().getValue() == null) {
@@ -131,16 +179,39 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
     }
 
     private void carregarProdutos(ProdutoCategoria produtoCategoria) {
+        RetrofitConfig.getComanditAPI(getContext()).consultarProdutosPorCategoria(produtoCategoria).enqueue(new Callback<List<Produto>>() {
+            @Override
+            public void onResponse(Call<List<Produto>> call, Response<List<Produto>> response) {
+                if(binding.swipeRefreshPedidos.isRefreshing()) {
+                    binding.swipeRefreshPedidos.setRefreshing(false);
+                }
+                if(response.isSuccessful()) {
+                    pedidosViewModel.setProdutos(response.body());
+                } else {
+                    showAPIException(ExceptionUtils.parseException(response));
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<Produto>> call, Throwable t) {
+                if(binding.swipeRefreshPedidos.isRefreshing()) {
+                    binding.swipeRefreshPedidos.setRefreshing(false);
+                }
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void carregarPedidos() {
         if (comandasViewModel.isComandaSelected()) {
-            RetrofitConfig.getComanditAPI(getContext()).consultarPedidosComandaResumo(comandasViewModel.getComanda().getValue()).enqueue(new Callback<List<Pedido>>() {
+            RetrofitConfig.getComanditAPI(getContext()).consultarPedidosComandaResumo(comandasViewModel.getComandaValue()).enqueue(new Callback<List<Pedido>>() {
                 @Override
                 public void onResponse(Call<List<Pedido>> call, Response<List<Pedido>> response) {
+                    if(binding.swipeRefreshPedidos.isRefreshing()) {
+                        binding.swipeRefreshPedidos.setRefreshing(false);
+                    }
                     if(response.isSuccessful()) {
-
+                        pedidosViewModel.setPedidos(response.body());
                     } else {
                         showAPIException(ExceptionUtils.parseException(response));
                     }
@@ -148,13 +219,13 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
                 @Override
                 public void onFailure(Call<List<Pedido>> call, Throwable t) {
+                    if(binding.swipeRefreshPedidos.isRefreshing()) {
+                        binding.swipeRefreshPedidos.setRefreshing(false);
+                    }
                     Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
-            if(binding.swipeRefreshPedidos.isRefreshing()) {
-                binding.swipeRefreshPedidos.setRefreshing(false);
-            }
             Messages.showToastMessage(getContext(), getString(R.string.msgSelecionarComanda));
         }
     }
@@ -189,10 +260,12 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         final AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_cadastrar), null);
         dialog.setView(dialogPedidoBinding.getRoot(), 10,20,10,5);
         dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
-            Pedido pedido = new Pedido(comandasViewModel.getComanda().getValue(), produto, holder.getQuantidade());
+            Pedido pedido = new Pedido(comandasViewModel.getComandaValue(), produto, holder.getQuantidade());
             String obs = dialogPedidoBinding.edtDialogObs.getText().toString();
-            if(!StringUtil.isEmptyString(obs)) { pedido.setObservacaoPedido(obs); }
-            //getPedidoAsync().execute(new ParamResult(AsyncMethod.CADASTRAR_PEDIDO, pedido));
+            if(!StringUtil.isEmptyString(obs)) {
+                pedido.setObservacaoPedido(obs);
+            }
+            RetrofitConfig.getComanditAPI(getContext()).cadastrarPedido(pedido).enqueue(callBackPedidoUpdate);
         });
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnCancelar), (dialog2, which) -> dialog2.dismiss());
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -204,7 +277,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
                 pedido.toStringResumo());
         dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnCancelar), (dialog1, which) -> showCancelPedidoDialog(pedido));
         dialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.btnTransferir), (dialog2, which) -> {
-            if(pedido.getComanda().equals(comandasViewModel.getComanda().getValue())) {
+            if(pedido.getComanda().equals(comandasViewModel.getComandaValue())) {
                 if(pedido.comHistorico()) {
                     showTransferPedidoDialog(pedido);
                 } else {
@@ -231,7 +304,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_transferir),
                 getString(R.string.msgComandaDestinoTransferencia));
         final Spinner spnComandasAbertas = new Spinner(getContext());
-        List<Comanda> comandasMesa = getComandasMesa(comandasViewModel.getComanda().getValue().getNumeroMesa());
+        List<Comanda> comandasMesa = getComandasMesa(comandasViewModel.getComandaValue().getNumeroMesa());
         if (comandasMesa != null) {
             spnComandasAbertas.setAdapter(new ArrayAdapter<>(getContext(), R.layout.produto_categoria_item, comandasMesa));
             dialog.setView(spnComandasAbertas, 10,20,10,5);
@@ -258,16 +331,6 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         } catch (IOException e) {
             return null;
         }
-    }
-
-    private CharSequence[] getMesasArray(int qtdMesas) {
-        if(comandasViewModel.getMesas() == null) {
-            comandasViewModel.setMesas(new CharSequence[qtdMesas]);
-            for(int i = 0; i < qtdMesas;i++) {
-                comandasViewModel.getMesas()[i] = String.valueOf(i + 1);
-            }
-        }
-        return comandasViewModel.getMesas();
     }
 
     private AlertDialog createGenericDialog(String title, String message){

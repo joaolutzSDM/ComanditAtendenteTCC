@@ -14,6 +14,7 @@ public class ComandasViewModel extends ViewModel {
     private MutableLiveData<List<Comanda>> comandas;
     private MutableLiveData<Comanda> comanda;
     private MutableLiveData<Integer> mesa;
+    private Integer qtdMesas;
     private CharSequence[] mesas;
 
     public ComandasViewModel() {
@@ -34,9 +35,8 @@ public class ComandasViewModel extends ViewModel {
         return comanda;
     }
 
-    public Comanda getComandaForRequest() {
-        return new Comanda(Objects.requireNonNull(comanda.getValue()).getIdComanda(),
-                comanda.getValue().getSenhaAcessoMobile());
+    public Comanda getComandaValue() {
+        return comanda.getValue();
     }
 
     public void setComanda(Comanda comanda) {
@@ -45,6 +45,10 @@ public class ComandasViewModel extends ViewModel {
 
     public LiveData<Integer> getMesa() {
         return mesa;
+    }
+
+    public Integer getMesaValue() {
+        return mesa.getValue();
     }
 
     public void setMesa(Integer mesa) {
@@ -67,4 +71,11 @@ public class ComandasViewModel extends ViewModel {
         this.mesas = mesas;
     }
 
+    public Integer getQtdMesas() {
+        return qtdMesas;
+    }
+
+    public void setQtdMesas(Integer qtdMesas) {
+        this.qtdMesas = qtdMesas;
+    }
 }
