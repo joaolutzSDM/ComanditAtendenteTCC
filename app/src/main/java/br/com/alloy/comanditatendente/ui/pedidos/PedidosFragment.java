@@ -119,18 +119,9 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         @Override
         public void onResponse(Call<Pedido> call, Response<Pedido> response) {
             if(response.isSuccessful()) {
-                String msg = "";
-                switch(Objects.requireNonNull(call.request().header("action"))) {
-                    case "save":
-                        msg = getString(R.string.msgPedidoCadastradoSucesso);
-                        break;
-                    case "cancel":
-                        msg = getString(R.string.msgPedidoCanceladoSucesso);
-                        break;
-                    case "transfer":
-                        msg = getString(R.string.msgPedidoTransferidoSucesso);
-                }
-                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                String message = getString(R.string.msgPedidoMensagemRetornoSucesso,
+                        Objects.requireNonNull(call.request().header("msg")));
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
             } else {
                 showAPIException(ExceptionUtils.parseException(response));
             }

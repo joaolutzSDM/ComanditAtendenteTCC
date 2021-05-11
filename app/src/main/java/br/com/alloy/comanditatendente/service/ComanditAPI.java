@@ -59,18 +59,18 @@ public interface ComanditAPI {
 
     // -----Pedidos-----
 
-    @Headers("action: save")
+    @Headers("msg: cadastrado")
     @POST("pedido/cadastrar")
     Call<Pedido> cadastrarPedido(@Body Pedido pedido);
 
     @POST("pedido/consultar/comanda/resumo")
     Call<List<Pedido>> consultarPedidosComandaResumo(@Body Comanda comanda);
 
-    @Headers("action: cancel")
+    @Headers("msg: cancelado")
     @DELETE("pedido/cancelar")
     Call<Pedido> cancelarPedido(@Body Pedido pedido);
 
-    @Headers("action: transfer")
+    @Headers("msg: transferido")
     @PUT("pedido/transferir")
     Call<Pedido> transferirPedido(@Body Pedido pedido);
 

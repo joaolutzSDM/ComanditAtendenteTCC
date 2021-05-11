@@ -89,13 +89,11 @@
     <string name="msgSelecionarCategoriaProduto">Selecione uma categoria de produto</string>
     <string name="msgSemProdutosCategoria">Não há produtos nessa categoria.</string>
     <string name="pedidos_comanda_title">Pedidos - %d</string>
-    <string name="msgPedidoCadastradoSucesso">Pedido cadastrado com sucesso</string>
+    <string name="msgPedidoMensagemRetornoSucesso">Pedido %s com sucesso</string>
     <string name="msgQuantidadePedidos">Pedidos encontrados: %d</string>
     <string name="msgEmptyListPedidos">Nenhum pedido encontrado</string>
     <string name="msgConfirmCancelPedido">Confirma o cancelamento do pedido?</string>
     <string name="msgComandaDestinoTransferencia">Selecione a comanda de destino do pedido</string>
-    <string name="msgPedidoCanceladoSucesso">Pedido cancelado com sucesso</string>
-    <string name="msgPedidoTransferidoSucesso">Pedido transferido com sucesso</string>
     <string name="msgPedidoComandaSelecionadaDifere">A comanda do pedido difere da comanda selecionada.</string>
     <string name="msgPedidoSemHistorico">Não é possível transferir um pedido sem histórico.</string>
     <string name="msgPedidoComandasIguaisSelecionadas">Selecione uma comanda diferente da comanda de origem do pedido.</string>
