@@ -2,9 +2,11 @@ package br.com.alloy.comanditatendente.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.widget.Toast;
 
 import br.com.alloy.comanditatendente.R;
+import br.com.alloy.comanditatendente.service.exception.APIException;
 
 import androidx.appcompat.app.AlertDialog;
 

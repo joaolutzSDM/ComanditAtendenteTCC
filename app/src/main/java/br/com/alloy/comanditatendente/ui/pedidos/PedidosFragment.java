@@ -1,34 +1,35 @@
 package br.com.alloy.comanditatendente.ui.pedidos;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
 import java.util.List;
+import java.util.Locale;
 
 import br.com.alloy.comanditatendente.R;
-import br.com.alloy.comanditatendente.databinding.FragmentComandasBinding;
 import br.com.alloy.comanditatendente.databinding.FragmentPedidosBinding;
 import br.com.alloy.comanditatendente.service.RetrofitConfig;
+import br.com.alloy.comanditatendente.service.exception.APIException;
+import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.Pedido;
 import br.com.alloy.comanditatendente.service.model.Produto;
 import br.com.alloy.comanditatendente.service.model.ProdutoCategoria;
 import br.com.alloy.comanditatendente.ui.Messages;
-import br.com.alloy.comanditatendente.ui.comandas.ComandaAdapter;
-import br.com.alloy.comanditatendente.ui.comandas.ComandaFilter;
-import br.com.alloy.comanditatendente.ui.comandas.ComandasFragment;
 import br.com.alloy.comanditatendente.ui.comandas.ComandasViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,10 +53,14 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         super.onViewCreated(view, savedInstanceState);
         setViewModelObserversAndListeners();
         binding.rcvPedidosProdutos.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        carregarProdutos(new ProdutoCategoria());
+        carregarCategorias();
     }
 
     private void setViewModelObserversAndListeners() {
+        //listagem cetagorias de produtos
+        pedidosViewModel.getCategorias().observe(getViewLifecycleOwner(), categorias -> {
+            carregarProdutos(categorias.get(0));
+        });
         //listagem produtos
         pedidosViewModel.getProdutos().observe(getViewLifecycleOwner(), produtos -> {
             binding.rcvPedidosProdutos.setAdapter(new ProdutoAdapter(produtos, this));
@@ -85,15 +90,40 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
             if(response.isSuccessful()) {
 
             } else {
-
+                showAPIException(ExceptionUtils.parseException(response));
             }
         }
 
         @Override
         public void onFailure(Call<List<Pedido>> call, Throwable t) {
-
+            Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    private void carregarCategorias() {
+        if(pedidosViewModel.getCategorias().getValue() == null) {
+            RetrofitConfig.getComanditAPI(getContext()).consultarCategoriasProduto().enqueue(new Callback<List<ProdutoCategoria>>() {
+                @Override
+                public void onResponse(Call<List<ProdutoCategoria>> call, Response<List<ProdutoCategoria>> response) {
+                    if(response.isSuccessful()) {
+                        pedidosViewModel.setCategorias(response.body());
+                    } else {
+                        showAPIException(ExceptionUtils.parseException(response));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<ProdutoCategoria>> call, Throwable t) {
+                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void showAPIException(APIException e) {
+        Log.e(getString(R.string.api_exception), e.getMessage());
+        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
 
     private void carregarProdutos(ProdutoCategoria produtoCategoria) {
 
@@ -107,13 +137,13 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
                     if(response.isSuccessful()) {
 
                     } else {
-
+                        showAPIException(ExceptionUtils.parseException(response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<Pedido>> call, Throwable t) {
-
+                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -132,6 +162,117 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
     @Override
     public void pedidoClicked(Pedido pedido) {
 
+    }
+
+    private void showConfirmPedidoDialog(final Produto produto) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialoglayout_pedido, null);
+
+        PedidoDialogHolder holder = new PedidoDialogHolder(dialogView);
+
+        //seta os dados do produto selecionado
+        holder.txvDialogNomeProduto.setText(String.format(Locale.getDefault(),
+                getString(R.string.produto_desc_pedido_dialog),
+                produto.getIdProduto(),
+                produto.getNomeProduto()));
+
+        final AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_cadastrar), null);
+        dialog.setView(dialogView, 10,20,10,5);
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
+            Pedido pedido = new Pedido(comandaSelecionada, produto, holder.getQuantidade());
+            String obs = holder.edtDialogObs.getText().toString();
+            if(!StringUtil.isEmptyString(obs)) { pedido.setObservacaoPedido(obs); }
+            getPedidoAsync().execute(new ParamResult(AsyncMethod.CADASTRAR_PEDIDO, pedido));
+        });
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnCancelar), (dialog2, which) -> dialog2.dismiss());
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        dialog.show();
+    }
+
+    private void showManagePedidoDialog(final Pedido pedido) {
+        AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_gerenciar),
+                pedido.toStringResumo());
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnCancelar), (dialog1, which) -> showCancelPedidoDialog(pedido));
+        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.btnTransferir), (dialog2, which) -> {
+            if(pedido.getComanda().equals(comandasViewModel.getComanda().getValue())) {
+                if(pedido.comHistorico()) {
+                    showTransferPedidoDialog(pedido);
+                } else {
+                    Messages.showDialogMessage(getContext(), getString(R.string.msgPedidoSemHistorico));
+                }
+            } else {
+                Messages.showDialogMessage(getContext(), getString(R.string.msgPedidoComandaSelecionadaDifere));
+            }
+        });
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnVoltar), (dialog3, which) -> dialog3.dismiss());
+        dialog.show();
+    }
+
+    private void showCancelPedidoDialog(final Pedido pedido) {
+        AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_cancelar),
+                getString(R.string.msgConfirmCancelPedido));
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnSim), (dialog1, which) -> getPedidoAsync().execute(new ParamResult(AsyncMethod.CANCELAR_PEDIDO, pedido)));
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnNao), (dialog2, which) -> dialog2.dismiss());
+        dialog.show();
+    }
+
+    private void showTransferPedidoDialog(final Pedido pedido) {
+        AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_transferir),
+                getString(R.string.msgComandaDestinoTransferencia));
+        final Spinner spnComandasAbertas = new Spinner(getContext());
+        List<Comanda> comandasMesa = getComandasMesa(comandasViewModel.getComanda().getValue().getNumeroMesa());
+        if (comandasMesa != null) {
+            spnComandasAbertas.setAdapter(new ArrayAdapter<Comanda>(this, R.layout.produto_categoria_item, comandasMesa));
+            dialog.setView(spnComandasAbertas, 10,20,10,5);
+            dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
+                Comanda comandaDestino = (Comanda) spnComandasAbertas.getSelectedItem();
+                if (!comandaDestino.equals(pedido.getComanda())) {
+
+                    pedido.setIdPedido(pedido.getComanda().getIdComanda()); //recupera a comanda origem do pedido
+                    pedido.setComanda(comandaDestino); //seta a comanda destino do pedido
+                    //getPedidoAsync().execute(new ParamResult(AsyncMethod.TRANSFERIR_PEDIDO, pedido));
+                } else {
+                    Messages.showDialogMessage(getContext(), getString(R.string.msgPedidoComandasIguaisSelecionadas));
+                }
+            });
+            dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnCancelar), (dialog2, which) -> dialog2.dismiss());
+            dialog.show();
+        } else {
+            showFinishDialog(null);
+        }
+    }
+
+    private List<Comanda> getComandasMesa(Integer mesa) {
+        try {
+            ParamResult result = getComandaAsync().execute(new ParamResult(AsyncMethod.CONSULTAR_COMANDAS_POR_MESA, mesa)).get();
+            return result.getResult() != null ? (List<Comanda>) result.getResult() : null;
+        } catch (InterruptedException | ExecutionException ex) {
+            return null;
+        }
+    }
+
+    private AlertDialog createGenericDialog(String title, String message){
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        //alertDialog.setIcon(R.mipmap.ic_launcher);
+        alertDialog.setTitle(title);
+        if(message != null) {
+            alertDialog.setMessage(message);
+        }
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+        return alertDialog;
+    }
+
+    //Método para mostrar uma mensagem genérica ao usuário quando um erro ocorrer. (o app é fechado ao clicar no OK)
+    private void showFinishDialog(@Nullable String message) {
+        final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle(getString(R.string.app_name));
+        alertDialog.setMessage(message == null ? getString(R.string.msgError) : message);
+        alertDialog.setIcon(R.mipmap.ic_launcher);
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog, which) -> requireActivity().finish());
+        alertDialog.show();
     }
 
 }

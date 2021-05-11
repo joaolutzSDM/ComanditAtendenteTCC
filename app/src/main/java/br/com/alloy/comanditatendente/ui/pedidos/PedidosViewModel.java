@@ -8,15 +8,18 @@ import java.util.List;
 
 import br.com.alloy.comanditatendente.service.model.Pedido;
 import br.com.alloy.comanditatendente.service.model.Produto;
+import br.com.alloy.comanditatendente.service.model.ProdutoCategoria;
 
 public class PedidosViewModel extends ViewModel {
 
     private final MutableLiveData<List<Pedido>> pedidos;
     private final MutableLiveData<List<Produto>> produtos;
+    private final MutableLiveData<List<ProdutoCategoria>> categorias;
 
     public PedidosViewModel() {
         pedidos = new MutableLiveData<>();
         produtos = new MutableLiveData<>();
+        categorias = new MutableLiveData<>();
     }
 
     public LiveData<List<Pedido>> getPedidos() {
@@ -33,6 +36,14 @@ public class PedidosViewModel extends ViewModel {
 
     public void setProdutos(List<Produto> produtos) {
         this.produtos.setValue(produtos);
+    }
+
+    public LiveData<List<ProdutoCategoria>> getCategorias() {
+        return categorias;
+    }
+
+    public void setCategorias(List<ProdutoCategoria> categorias) {
+        this.categorias.setValue(categorias);
     }
 
 }

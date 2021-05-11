@@ -23,4 +23,6 @@ public class StringUtil {
         return fmt.format(value).replace(fmt.getCurrency().getSymbol(Locale.getDefault()), "").trim();
     }
 
+
+
 }

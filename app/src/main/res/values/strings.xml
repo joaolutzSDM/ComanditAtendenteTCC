@@ -103,5 +103,6 @@
     <string name="rlPedidoQtdProduto">Qtde pedido</string>
     <string name="rlPedidoObservacao">Observação pedido</string>
     <string name="rlPrecoProduto">Preço Produto</string>
+    <string name="msgError">Ocorreu um erro durante a operação. Contate o asministrador do sistema.</string>
 
 </resources>
