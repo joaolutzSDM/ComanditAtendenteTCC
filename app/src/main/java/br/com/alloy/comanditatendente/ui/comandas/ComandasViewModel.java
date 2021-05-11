@@ -50,6 +50,10 @@ public class ComandasViewModel extends ViewModel {
         this.mesa.setValue(mesa);
     }
 
+    public boolean isComandaSelected() {
+        return comanda.getValue() != null;
+    }
+
     public boolean isMesaSelected() {
         return mesa.getValue() != null;
     }
