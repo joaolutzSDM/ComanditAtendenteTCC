@@ -65,13 +65,9 @@
     <string name="btnNao">Não</string>
 
     <!-- Geral -->
-    <string name="msgError">Ocorreu um erro durante a operação.\nVerifique o status do servidor e da conexão Wi-Fi do dispositivo.\nSe o problema persistir, contate o administrador do sistema.</string>
-    <string name="msgErrorServerConnection">Não foi possível estabelecer uma conexão com o servidor.\nVerifique o status do servidor e da conexão Wi-Fi do dispositivo.\nSe o problema persistir, contate o administrador do sistema.</string>
+    <string name="msgError">Ocorreu um erro durante a operação.\nVerifique o status da conexão Wi-Fi do dispositivo.\nSe o problema persistir, contate o administrador do sistema.</string>
     <string name="msgErrorConfig">Ocorreu um erro ao recuperar um valor de configuração.\nContate o administrador do sistema.</string>
-    <string name="msgConnectedToServer">Conectado ao servidor</string>
     <string name="msgWifiDeactivated">A conexão Wi-Fi deve estar ativada para iniciar o aplicativo.</string>
-    <string name="msgErrorServerDisconnection">Ocorreu um erro ao desconectar do Banco de Dados.</string>
-    <string name="msgInformarIP">Informe o último número do IP do servidor MySQL</string>
     <string name="loading">Processando</string>
 
     <!-- Login -->

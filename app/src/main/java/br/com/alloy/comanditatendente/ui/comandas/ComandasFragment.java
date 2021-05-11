@@ -64,8 +64,27 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        carregarQtdeMesas();
         setViewModelObserversAndListeners();
         carregarComandas(ComandaFilter.TODAS);
+    }
+
+    private void carregarQtdeMesas() {
+        RetrofitConfig.getComanditAPI(getContext()).consultarConfiguracao("QUANTIDADE_MESAS").enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.isSuccessful()) {
+                    comandasViewModel.setQtdMesas(Integer.parseInt(response.body()));
+                } else {
+                    showAPIException(ExceptionUtils.parseException(response));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setViewModelObserversAndListeners() {
@@ -86,8 +105,6 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         comandasViewModel.getMesa().observe(getViewLifecycleOwner(), mesa -> {
             binding.fabSelecionarMesa.setImageBitmap(textAsBitmap(mesa.toString()));
         });
-        //TODO - Recuperar quantidade de mesas da API
-        comandasViewModel.setQtdMesas(30);
         binding.fabSelecionarMesa.setOnClickListener(v -> {
             showListDialog(getString(R.string.msgSelecionarMesa), getMesasArray(comandasViewModel.getQtdMesas()), null, (dialog, which) -> {
                 comandasViewModel.setMesa(which + 1);
@@ -120,6 +137,23 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         Canvas canvas = new Canvas(image);
         canvas.drawText(text, 0, baseline, paint);
         return image;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_comandas, menu);
+        //remove os dois últimos itens do menu
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getOrder() == 1) { //Comandas Filter
+            filterComandas();
+            return true;
+        }
+        return false;
     }
 
     //-------------------CALLBACKS API------------------//
@@ -189,23 +223,6 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
                 RetrofitConfig.getComanditAPI(getContext()).consultarComandasMesa(comandasViewModel.getMesaValue()).enqueue(callBackComandas);
                 break;
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_comandas, menu);
-        //remove os dois últimos itens do menu
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getOrder() == 1) { //Comandas Filter
-            filterComandas();
-            return true;
-        }
-        return false;
     }
 
     private void filterComandas() {
