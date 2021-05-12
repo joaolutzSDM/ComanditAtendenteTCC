@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Locale;
 
-import static br.com.alloy.comanditcliente.ui.util.StringUtil.getCurrencyStringWithoutR$;
+import static br.com.alloy.comanditatendente.ui.util.StringUtil.getCurrencyStringWithoutR$;
 import br.com.alloy.comanditatendente.R;
 import br.com.alloy.comanditatendente.databinding.ProdutoItemBinding;
 import br.com.alloy.comanditatendente.service.model.Produto;

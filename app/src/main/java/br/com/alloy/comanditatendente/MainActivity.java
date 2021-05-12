@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
         RetrofitConfig.initiateRetrofitAPI(this);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.navigation_comandas, R.id.navigation_pedidos).build();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_comandas, R.id.navigation_pedidos).build();
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();

@@ -1,5 +1,6 @@
 package br.com.alloy.comanditatendente.ui.comandas;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,6 +31,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +43,7 @@ import br.com.alloy.comanditatendente.service.RetrofitConfig;
 import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.Comanda;
+import br.com.alloy.comanditatendente.service.model.Configuracao;
 import br.com.alloy.comanditatendente.service.model.MesaAlt;
 import br.com.alloy.comanditatendente.ui.Messages;
 import br.com.alloy.comanditatendente.ui.cupomfiscal.CupomFiscalActivity;
@@ -53,6 +56,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
     private FragmentComandasBinding binding;
     private ComandasViewModel comandasViewModel;
     private BottomNavigationView bottomNavigationView;
+    private ProgressDialog progressDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -65,23 +69,27 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         carregarQtdeMesas();
-        setViewModelObserversAndListeners();
-        carregarComandas(ComandaFilter.TODAS);
     }
 
     private void carregarQtdeMesas() {
-        RetrofitConfig.getComanditAPI(getContext()).consultarConfiguracao("QUANTIDADE_MESAS").enqueue(new Callback<String>() {
+        progressDialog = ProgressDialog.show(getContext(), null,
+                getString(R.string.carregando_configuracao), true);
+        RetrofitConfig.getComanditAPI(getContext()).consultarConfiguracao(new Configuracao("QUANTIDADE_MESAS")).enqueue(new Callback<Configuracao>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<Configuracao> call, Response<Configuracao> response) {
+                progressDialog.dismiss();
                 if(response.isSuccessful()) {
-                    comandasViewModel.setQtdMesas(Integer.parseInt(response.body()));
+                    comandasViewModel.setQtdMesas(Integer.parseInt(response.body().getValorConfiguracao()));
+                    setViewModelObserversAndListeners();
+                    carregarComandas(ComandaFilter.TODAS);
                 } else {
                     showAPIException(ExceptionUtils.parseException(response));
                 }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<Configuracao> call, Throwable t) {
+                progressDialog.dismiss();
                 Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -97,10 +105,10 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             //vai para a tela de pedidos com a comanda atual selecionada
             bottomNavigationView.getMenu().findItem(R.id.navigation_menu_pedidos).setTitle(String.format(
                     getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
-            //bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
+            bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
 
-            NavController navController = NavHostFragment.findNavController(ComandasFragment.this);
-            navController.navigate(R.id.navigation_pedidos);
+//            NavController navController = NavHostFragment.findNavController(ComandasFragment.this);
+//            navController.navigate(R.id.navigation_pedidos);
         });
         comandasViewModel.getMesa().observe(getViewLifecycleOwner(), mesa -> {
             binding.fabSelecionarMesa.setImageBitmap(textAsBitmap(mesa.toString()));
@@ -248,7 +256,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             gerenciarComanda(comanda, options);
         } else {
             if(comandasViewModel.isMesaSelected()) { //se foi selecionada uma mesa
-                RetrofitConfig.getComanditAPI(getContext()).abrirComanda(comanda);
+                RetrofitConfig.getComanditAPI(getContext()).abrirComanda(comanda).enqueue(callBackComandaUpdate);
             } else { //mesa não foi selecionada
                 Toast.makeText(getContext(), R.string.msgSelecionarMesa, Toast.LENGTH_SHORT).show();
             }

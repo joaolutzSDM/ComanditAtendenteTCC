@@ -9,6 +9,10 @@ public class Configuracao implements Serializable {
     private String chaveConfiguracao;
     private String valorConfiguracao;
 
+    public Configuracao(String chaveConfiguracao) {
+        this.chaveConfiguracao = chaveConfiguracao;
+    }
+
     /**
      * @return the chaveConfiguracao
      */

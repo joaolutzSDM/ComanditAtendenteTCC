@@ -3,6 +3,7 @@ package br.com.alloy.comanditatendente.service;
 import java.util.List;
 
 import br.com.alloy.comanditatendente.service.model.Comanda;
+import br.com.alloy.comanditatendente.service.model.Configuracao;
 import br.com.alloy.comanditatendente.service.model.MesaAlt;
 import br.com.alloy.comanditatendente.service.model.Pedido;
 import br.com.alloy.comanditatendente.service.model.Produto;
@@ -47,7 +48,7 @@ public interface ComanditAPI {
 
     //RECUPERAR_CONFIGURACAO_POR_NOME
     @POST("configuracao/consultar")
-    Call<String> consultarConfiguracao(@Body String nomeconfiguracao);
+    Call<Configuracao> consultarConfiguracao(@Body Configuracao configuracao);
 
     // -----Produtos-----
 
