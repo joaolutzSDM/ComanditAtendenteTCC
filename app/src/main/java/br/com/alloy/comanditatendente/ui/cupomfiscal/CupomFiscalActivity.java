@@ -90,7 +90,7 @@ public class CupomFiscalActivity extends AppCompatActivity {
     private void carregarCupomFiscal(Comanda comanda) {
         progressDialog = ProgressDialog.show(this, getString(R.string.app_name),
                 getString(R.string.loading), true);
-        RetrofitConfig.getComanditAPI(this).consultarPedidosCupomFiscal(comanda).enqueue(new Callback<String>() {
+        RetrofitConfig.getComanditAPI().consultarPedidosCupomFiscal(comanda).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 progressDialog.dismiss();

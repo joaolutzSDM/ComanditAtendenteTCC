@@ -146,7 +146,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     private void carregarCategorias() {
         if(pedidosViewModel.getCategorias().getValue() == null) {
-            RetrofitConfig.getComanditAPI(getContext()).consultarCategoriasProduto().enqueue(new Callback<List<ProdutoCategoria>>() {
+            RetrofitConfig.getComanditAPI().consultarCategoriasProduto().enqueue(new Callback<List<ProdutoCategoria>>() {
                 @Override
                 public void onResponse(Call<List<ProdutoCategoria>> call, Response<List<ProdutoCategoria>> response) {
                     if(response.isSuccessful()) {
@@ -170,7 +170,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
     }
 
     private void carregarProdutos(ProdutoCategoria produtoCategoria) {
-        RetrofitConfig.getComanditAPI(getContext()).consultarProdutosPorCategoria(produtoCategoria).enqueue(new Callback<List<Produto>>() {
+        RetrofitConfig.getComanditAPI().consultarProdutosPorCategoria(produtoCategoria).enqueue(new Callback<List<Produto>>() {
             @Override
             public void onResponse(Call<List<Produto>> call, Response<List<Produto>> response) {
                 if(binding.swipeRefreshPedidos.isRefreshing()) {
@@ -195,7 +195,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     private void carregarPedidos() {
         if (comandasViewModel.isComandaSelected()) {
-            RetrofitConfig.getComanditAPI(getContext()).consultarPedidosComandaResumo(comandasViewModel.getComandaValue()).enqueue(new Callback<List<Pedido>>() {
+            RetrofitConfig.getComanditAPI().consultarPedidosComandaResumo(comandasViewModel.getComandaValue()).enqueue(new Callback<List<Pedido>>() {
                 @Override
                 public void onResponse(Call<List<Pedido>> call, Response<List<Pedido>> response) {
                     if(binding.swipeRefreshPedidos.isRefreshing()) {
@@ -256,7 +256,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
             if(!StringUtil.isEmptyString(obs)) {
                 pedido.setObservacaoPedido(obs);
             }
-            RetrofitConfig.getComanditAPI(getContext()).cadastrarPedido(pedido).enqueue(callBackPedidoUpdate);
+            RetrofitConfig.getComanditAPI().cadastrarPedido(pedido).enqueue(callBackPedidoUpdate);
         });
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnCancelar), (dialog2, which) -> dialog2.dismiss());
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -286,7 +286,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_cancelar),
                 getString(R.string.msgConfirmCancelPedido));
         dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnSim),
-                (dialog1, which) -> RetrofitConfig.getComanditAPI(getContext()).cancelarPedido(pedido).enqueue(callBackPedidoUpdate));
+                (dialog1, which) -> RetrofitConfig.getComanditAPI().cancelarPedido(pedido).enqueue(callBackPedidoUpdate));
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnNao), (dialog2, which) -> dialog2.dismiss());
         dialog.show();
     }
@@ -304,7 +304,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
                 if (!comandaDestino.equals(pedido.getComanda())) {
                     pedido.setItem(pedido.getComanda().getIdComanda()); //recupera a comanda origem do pedido
                     pedido.setComanda(comandaDestino); //seta a comanda destino do pedido
-                    RetrofitConfig.getComanditAPI(getContext()).transferirPedido(pedido).enqueue(callBackPedidoUpdate);
+                    RetrofitConfig.getComanditAPI().transferirPedido(pedido).enqueue(callBackPedidoUpdate);
                 } else {
                     Messages.showDialogMessage(getContext(), getString(R.string.msgPedidoComandasIguaisSelecionadas));
                 }
@@ -318,7 +318,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     private List<Comanda> getComandasMesa(Integer mesa) {
         try {
-            return RetrofitConfig.getComanditAPI(getContext()).consultarComandasMesa(mesa).execute().body();
+            return RetrofitConfig.getComanditAPI().consultarComandasMesa(mesa).execute().body();
         } catch (IOException e) {
             return null;
         }

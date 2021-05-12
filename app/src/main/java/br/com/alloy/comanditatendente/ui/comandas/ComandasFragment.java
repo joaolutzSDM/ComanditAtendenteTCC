@@ -74,7 +74,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
     private void carregarQtdeMesas() {
         progressDialog = ProgressDialog.show(getContext(), null,
                 getString(R.string.carregando_configuracao), true);
-        RetrofitConfig.getComanditAPI(getContext()).consultarConfiguracao(new Configuracao("QUANTIDADE_MESAS")).enqueue(new Callback<Configuracao>() {
+        RetrofitConfig.getComanditAPI().consultarConfiguracao(new Configuracao("QUANTIDADE_MESAS")).enqueue(new Callback<Configuracao>() {
             @Override
             public void onResponse(Call<Configuracao> call, Response<Configuracao> response) {
                 progressDialog.dismiss();
@@ -106,9 +106,8 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             bottomNavigationView.getMenu().findItem(R.id.navigation_menu_pedidos).setTitle(String.format(
                     getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
             bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
-
-//            NavController navController = NavHostFragment.findNavController(ComandasFragment.this);
-//            navController.navigate(R.id.navigation_pedidos);
+            NavController navController = NavHostFragment.findNavController(ComandasFragment.this);
+            navController.navigate(R.id.navigation_pedidos);
         });
         comandasViewModel.getMesa().observe(getViewLifecycleOwner(), mesa -> {
             binding.fabSelecionarMesa.setImageBitmap(textAsBitmap(mesa.toString()));
@@ -219,16 +218,16 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         binding.swipeRefreshComandas.setRefreshing(true);
         switch (comandaFilter) {
             case TODAS:
-                RetrofitConfig.getComanditAPI(getContext()).consultarComandas().enqueue(callBackComandas);
+                RetrofitConfig.getComanditAPI().consultarComandas().enqueue(callBackComandas);
                 break;
             case ABERTAS:
-                RetrofitConfig.getComanditAPI(getContext()).consultarComandasAbertas().enqueue(callBackComandas);
+                RetrofitConfig.getComanditAPI().consultarComandasAbertas().enqueue(callBackComandas);
                 break;
             case FECHADAS:
-                RetrofitConfig.getComanditAPI(getContext()).consultarComandasFechadas().enqueue(callBackComandas);
+                RetrofitConfig.getComanditAPI().consultarComandasFechadas().enqueue(callBackComandas);
                 break;
             case POR_MESA:
-                RetrofitConfig.getComanditAPI(getContext()).consultarComandasMesa(comandasViewModel.getMesaValue()).enqueue(callBackComandas);
+                RetrofitConfig.getComanditAPI().consultarComandasMesa(comandasViewModel.getMesaValue()).enqueue(callBackComandas);
                 break;
         }
     }
@@ -256,7 +255,8 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             gerenciarComanda(comanda, options);
         } else {
             if(comandasViewModel.isMesaSelected()) { //se foi selecionada uma mesa
-                RetrofitConfig.getComanditAPI(getContext()).abrirComanda(comanda).enqueue(callBackComandaUpdate);
+                comanda.setNumeroMesa(comandasViewModel.getMesaValue());
+                RetrofitConfig.getComanditAPI().abrirComanda(comanda).enqueue(callBackComandaUpdate);
             } else { //mesa não foi selecionada
                 Toast.makeText(getContext(), R.string.msgSelecionarMesa, Toast.LENGTH_SHORT).show();
             }
@@ -302,7 +302,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
                         i.putExtra("comanda", comanda);
                         startActivity(i);
                     } else if(options.get(which).equals(getString(R.string.comanda_gerenciar_item_fechar))) { //Fechar Comanda
-                        RetrofitConfig.getComanditAPI(getContext()).fecharComanda(comanda).enqueue(callBackComandaUpdate);
+                        RetrofitConfig.getComanditAPI().fecharComanda(comanda).enqueue(callBackComandaUpdate);
                     }
                     break;
             }
@@ -311,7 +311,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
 
     private void alterarMesa(Comanda comanda) {
         MesaAlt mesaAlt = new MesaAlt(comanda.getNumeroMesa(), comandasViewModel.getMesaValue());
-        RetrofitConfig.getComanditAPI(getContext()).alterarMesa(mesaAlt).enqueue(new Callback<String>() {
+        RetrofitConfig.getComanditAPI().alterarMesa(mesaAlt).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if(response.isSuccessful()) {
