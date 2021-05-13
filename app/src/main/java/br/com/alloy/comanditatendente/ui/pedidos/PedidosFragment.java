@@ -29,7 +29,6 @@ import java.util.Objects;
 import br.com.alloy.comanditatendente.R;
 import br.com.alloy.comanditatendente.databinding.DialogPedidoBinding;
 import br.com.alloy.comanditatendente.databinding.FragmentPedidosBinding;
-import br.com.alloy.comanditatendente.databinding.SeletorQuantidadeBinding;
 import br.com.alloy.comanditatendente.service.RetrofitConfig;
 import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
