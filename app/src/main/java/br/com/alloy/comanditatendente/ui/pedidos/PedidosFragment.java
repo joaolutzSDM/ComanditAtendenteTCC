@@ -139,6 +139,9 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
             builder.setItems(items, listener);
         } else if(listResId != null) {
             builder.setItems(listResId, listener);
+        } else {
+            builder.setAdapter(new ArrayAdapter<>(getContext(),
+                    R.layout.produto_categoria_item, pedidosViewModel.getCategoriasValue()), listener);
         }
         builder.show();
     }
