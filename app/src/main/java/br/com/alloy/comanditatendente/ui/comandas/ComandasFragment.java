@@ -63,12 +63,18 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         binding = FragmentComandasBinding.inflate(inflater, container, false);
         comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
         bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+        setHasOptionsMenu(true);
         return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        carregarQtdeMesas();
+        if(comandasViewModel.getQtdMesas().getValue() == null) {
+            carregarQtdeMesas();
+        } else {
+            setViewModelObserversAndListeners();
+            carregarComandas(ComandaFilter.TODAS);
+        }
     }
 
     private void carregarQtdeMesas() {
@@ -103,7 +109,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         //comanda selecionada
         comandasViewModel.getComanda().observe(getViewLifecycleOwner(), comanda -> {
             //vai para a tela de pedidos com a comanda atual selecionada
-            bottomNavigationView.getMenu().findItem(R.id.navigation_menu_pedidos).setTitle(String.format(
+            bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos).setTitle(String.format(
                     getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
             bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
             NavController navController = NavHostFragment.findNavController(ComandasFragment.this);
@@ -113,7 +119,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             binding.fabSelecionarMesa.setImageBitmap(textAsBitmap(mesa.toString()));
         });
         binding.fabSelecionarMesa.setOnClickListener(v -> {
-            showListDialog(getString(R.string.msgSelecionarMesa), getMesasArray(comandasViewModel.getQtdMesas()), null, (dialog, which) -> {
+            showListDialog(getString(R.string.msgSelecionarMesa), getMesasArray(comandasViewModel.getQtdMesas().getValue()), null, (dialog, which) -> {
                 comandasViewModel.setMesa(which + 1);
             });
         });
@@ -156,11 +162,8 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getOrder() == 1) { //Comandas Filter
-            filterComandas();
-            return true;
-        }
-        return false;
+        filterComandas();
+        return true;
     }
 
     //-------------------CALLBACKS API------------------//

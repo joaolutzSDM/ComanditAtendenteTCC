@@ -14,13 +14,14 @@ public class ComandasViewModel extends ViewModel {
     private MutableLiveData<List<Comanda>> comandas;
     private MutableLiveData<Comanda> comanda;
     private MutableLiveData<Integer> mesa;
-    private Integer qtdMesas;
+    private MutableLiveData<Integer> qtdMesas;
     private CharSequence[] mesas;
 
     public ComandasViewModel() {
         comandas = new MutableLiveData<>();
         comanda = new MutableLiveData<>();
         mesa = new MutableLiveData<>();
+        qtdMesas = new MutableLiveData<>();
     }
 
     public LiveData<List<Comanda>> getComandas() {
@@ -71,11 +72,12 @@ public class ComandasViewModel extends ViewModel {
         this.mesas = mesas;
     }
 
-    public Integer getQtdMesas() {
+    public LiveData<Integer> getQtdMesas() {
         return qtdMesas;
     }
 
     public void setQtdMesas(Integer qtdMesas) {
-        this.qtdMesas = qtdMesas;
+        this.qtdMesas.setValue(qtdMesas);
     }
+
 }

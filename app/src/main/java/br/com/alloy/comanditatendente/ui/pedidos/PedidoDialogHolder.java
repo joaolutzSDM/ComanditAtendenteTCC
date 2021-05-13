@@ -10,12 +10,11 @@ public class PedidoDialogHolder {
     private Integer quantidade = 1; //inicializa a quantidade com 1
 
     public PedidoDialogHolder(SeletorQuantidadeBinding binding) {
-        //ButterKnife.bind(this, dialogView);
         View.OnClickListener ajusteQuantidadeClick = v -> {
             quantidade += (v == binding.btnMaisQuantidade) ? 1 : -1;
             binding.txvQuantidade.setText(quantidade.toString());
             binding.btnMenosQuantidade.setEnabled(quantidade > 1);
-            binding.btnMaisQuantidade.setEnabled(quantidade < 50);
+            binding.btnMaisQuantidade.setEnabled(quantidade < 30);
         };
         binding.btnMenosQuantidade.setOnClickListener(ajusteQuantidadeClick);
         binding.btnMaisQuantidade.setOnClickListener(ajusteQuantidadeClick);

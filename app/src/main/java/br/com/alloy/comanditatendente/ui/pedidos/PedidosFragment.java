@@ -55,6 +55,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         binding = FragmentPedidosBinding.inflate(inflater, container, false);
         pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
         comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
+        setHasOptionsMenu(true);
         return binding.getRoot();
     }
 
@@ -108,11 +109,9 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getOrder() == 1) { //Comandas Filter
-            carregarPedidos();
-            return true;
-        }
-        return false;
+        binding.swipeRefreshPedidos.setRefreshing(false);
+        carregarPedidos();
+        return true;
     }
 
     private Callback<Pedido> callBackPedidoUpdate = new Callback<Pedido>() {
@@ -241,8 +240,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     private void showConfirmPedidoDialog(final Produto produto) {
         DialogPedidoBinding dialogPedidoBinding = DialogPedidoBinding.inflate(LayoutInflater.from(getContext()));
-        SeletorQuantidadeBinding seletorQuantidadeBinding = SeletorQuantidadeBinding.inflate(LayoutInflater.from(getContext()));
-        PedidoDialogHolder holder = new PedidoDialogHolder(seletorQuantidadeBinding);
+        PedidoDialogHolder holder = new PedidoDialogHolder(dialogPedidoBinding.includeQuantidade);
 
         //seta os dados do produto selecionado
         dialogPedidoBinding.txvDialogNomeProduto.setText(String.format(Locale.getDefault(),
