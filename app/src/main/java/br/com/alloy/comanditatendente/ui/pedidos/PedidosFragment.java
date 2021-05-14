@@ -39,6 +39,7 @@ import br.com.alloy.comanditatendente.service.model.Produto;
 import br.com.alloy.comanditatendente.service.model.ProdutoCategoria;
 import br.com.alloy.comanditatendente.ui.Messages;
 import br.com.alloy.comanditatendente.ui.comandas.ComandasViewModel;
+import br.com.alloy.comanditatendente.ui.util.FragmentUtil;
 import br.com.alloy.comanditatendente.ui.util.StringUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -250,7 +251,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         dialogPedidoBinding.txvDialogNomeProduto.setText(String.format(Locale.getDefault(),
                 getString(R.string.produto_desc_pedido_dialog), produto.getIdProduto(), produto.getNomeProduto()));
 
-        final AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_cadastrar), null);
+        final AlertDialog dialog = FragmentUtil.createGenericDialog(getContext(), getString(R.string.title_dialog_pedido_cadastrar), null);
         dialog.setView(dialogPedidoBinding.getRoot(), 10,20,10,5);
         dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
             Pedido pedido = new Pedido(comandasViewModel.getComandaValue(), produto, holder.getQuantidade());
@@ -266,7 +267,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
     }
 
     private void showManagePedidoDialog(final Pedido pedido) {
-        AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_gerenciar),
+        AlertDialog dialog = FragmentUtil.createGenericDialog(getContext(), getString(R.string.title_dialog_pedido_gerenciar),
                 pedido.toStringResumo());
         dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnCancelar), (dialog1, which) -> showCancelPedidoDialog(pedido));
         dialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.btnTransferir), (dialog2, which) -> {
@@ -285,7 +286,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
     }
 
     private void showCancelPedidoDialog(final Pedido pedido) {
-        AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_cancelar),
+        AlertDialog dialog = FragmentUtil.createGenericDialog(getContext(), getString(R.string.title_dialog_pedido_cancelar),
                 getString(R.string.msgConfirmCancelPedido));
         dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnSim),
                 (dialog1, which) -> RetrofitConfig.getComanditAPI().cancelarPedido(pedido).enqueue(callBackPedidoUpdate));
@@ -316,7 +317,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
     }
 
     private void showTransferPedidoDialog(Pedido pedido, List<Comanda> comandas) {
-        AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_transferir),
+        AlertDialog dialog = FragmentUtil.createGenericDialog(getContext(), getString(R.string.title_dialog_pedido_transferir),
                 getString(R.string.msgComandaDestinoTransferencia));
         final Spinner spnComandasAbertas = new Spinner(getContext());
         spnComandasAbertas.setAdapter(new ArrayAdapter<>(getContext(), R.layout.produto_categoria_item, comandas));
@@ -333,30 +334,6 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         });
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnCancelar), (dialog2, which) -> dialog2.dismiss());
         dialog.show();
-    }
-
-    private AlertDialog createGenericDialog(String title, String message){
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-        //alertDialog.setIcon(R.mipmap.ic_launcher);
-        alertDialog.setTitle(title);
-        if(message != null) {
-            alertDialog.setMessage(message);
-        }
-        alertDialog.setCancelable(false);
-        alertDialog.setCanceledOnTouchOutside(false);
-        return alertDialog;
-    }
-
-    //Método para mostrar uma mensagem genérica ao usuário quando um erro ocorrer. (o app é fechado ao clicar no OK)
-    private void showFinishDialog(@Nullable String message) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-        alertDialog.setTitle(getString(R.string.app_name));
-        alertDialog.setMessage(message == null ? getString(R.string.msgError) : message);
-        alertDialog.setIcon(R.mipmap.ic_launcher);
-        alertDialog.setCancelable(false);
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog, which) -> requireActivity().finish());
-        alertDialog.show();
     }
 
 }

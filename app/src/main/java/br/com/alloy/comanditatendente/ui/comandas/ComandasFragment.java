@@ -47,6 +47,7 @@ import br.com.alloy.comanditatendente.service.model.Configuracao;
 import br.com.alloy.comanditatendente.service.model.MesaAlt;
 import br.com.alloy.comanditatendente.ui.Messages;
 import br.com.alloy.comanditatendente.ui.cupomfiscal.CupomFiscalActivity;
+import br.com.alloy.comanditatendente.ui.util.FragmentUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -337,7 +338,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         try {
             Bitmap bitmap = barcodeEncoder.encodeBitmap(comanda.getQRCodeString(), BarcodeFormat.QR_CODE, 500, 500);
             imageViewQrCode.setImageBitmap(bitmap);
-            final AlertDialog qrCodeDialog = createGenericDialog(getString(R.string.title_dialog_comanda_sam_qrcode),
+            final AlertDialog qrCodeDialog = FragmentUtil.createGenericDialog(getContext(), getString(R.string.title_dialog_comanda_sam_qrcode),
                     String.format(Locale.getDefault(), getString(R.string.message_dialog_comanda_sam_qrcode), comanda.getIdComanda()));
             qrCodeDialog.setView(imageViewQrCode);
             qrCodeDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
@@ -347,18 +348,6 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         } catch (WriterException e) {
             Messages.showToastMessage(getContext(), getString(R.string.msgErroQRCode));
         }
-    }
-
-    private AlertDialog createGenericDialog(String title, String message){
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-        //alertDialog.setIcon(R.mipmap.ic_launcher);
-        alertDialog.setTitle(title);
-        if(message != null) {
-            alertDialog.setMessage(message);
-        }
-        alertDialog.setCancelable(false);
-        alertDialog.setCanceledOnTouchOutside(false);
-        return alertDialog;
     }
 
     private void showListDialog(String title, @Nullable CharSequence[] items, @Nullable Integer listResId, DialogInterface.OnClickListener listener) {
