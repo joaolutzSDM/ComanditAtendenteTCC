@@ -1,5 +1,6 @@
 package br.com.alloy.comanditatendente.ui.pedidos;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,6 +49,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
     private FragmentPedidosBinding binding;
     private PedidosViewModel pedidosViewModel;
     private ComandasViewModel comandasViewModel;
+    private ProgressDialog progressDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -270,7 +272,7 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         dialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.btnTransferir), (dialog2, which) -> {
             if(pedido.getComanda().equals(comandasViewModel.getComandaValue())) {
                 if(pedido.comHistorico()) {
-                    showTransferPedidoDialog(pedido);
+                    transferirPedido(pedido);
                 } else {
                     Messages.showDialogMessage(getContext(), getString(R.string.msgPedidoSemHistorico));
                 }
@@ -291,37 +293,46 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         dialog.show();
     }
 
-    private void showTransferPedidoDialog(final Pedido pedido) {
+    private void transferirPedido(final Pedido pedido) {
+        progressDialog = ProgressDialog.show(getContext(), null,
+                getString(R.string.carregando_comandas_mesa), true);
+        RetrofitConfig.getComanditAPI().consultarComandasMesa(comandasViewModel.getComandaValue().getNumeroMesa()).enqueue(new Callback<List<Comanda>>() {
+            @Override
+            public void onResponse(Call<List<Comanda>> call, Response<List<Comanda>> response) {
+                progressDialog.dismiss();
+                if(response.isSuccessful()) {
+                    showTransferPedidoDialog(pedido, response.body());
+                } else {
+                    showAPIException(ExceptionUtils.parseException(response));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Comanda>> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showTransferPedidoDialog(Pedido pedido, List<Comanda> comandas) {
         AlertDialog dialog = createGenericDialog(getString(R.string.title_dialog_pedido_transferir),
                 getString(R.string.msgComandaDestinoTransferencia));
         final Spinner spnComandasAbertas = new Spinner(getContext());
-        List<Comanda> comandasMesa = getComandasMesa(comandasViewModel.getComandaValue().getNumeroMesa());
-        if (comandasMesa != null) {
-            spnComandasAbertas.setAdapter(new ArrayAdapter<>(getContext(), R.layout.produto_categoria_item, comandasMesa));
-            dialog.setView(spnComandasAbertas, 10,20,10,5);
-            dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
-                Comanda comandaDestino = (Comanda) spnComandasAbertas.getSelectedItem();
-                if (!comandaDestino.equals(pedido.getComanda())) {
-                    pedido.setItem(pedido.getComanda().getIdComanda()); //recupera a comanda origem do pedido
-                    pedido.setComanda(comandaDestino); //seta a comanda destino do pedido
-                    RetrofitConfig.getComanditAPI().transferirPedido(pedido).enqueue(callBackPedidoUpdate);
-                } else {
-                    Messages.showDialogMessage(getContext(), getString(R.string.msgPedidoComandasIguaisSelecionadas));
-                }
-            });
-            dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnCancelar), (dialog2, which) -> dialog2.dismiss());
-            dialog.show();
-        } else {
-            showFinishDialog(null);
-        }
-    }
-
-    private List<Comanda> getComandasMesa(Integer mesa) {
-        try {
-            return RetrofitConfig.getComanditAPI().consultarComandasMesa(mesa).execute().body();
-        } catch (IOException e) {
-            return null;
-        }
+        spnComandasAbertas.setAdapter(new ArrayAdapter<>(getContext(), R.layout.produto_categoria_item, comandas));
+        dialog.setView(spnComandasAbertas, 10,20,10,5);
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.btnOK), (dialog1, which) -> {
+            Comanda comandaDestino = (Comanda) spnComandasAbertas.getSelectedItem();
+            if (!comandaDestino.equals(pedido.getComanda())) {
+                pedido.setItem(pedido.getComanda().getIdComanda()); //recupera a comanda origem do pedido
+                pedido.setComanda(comandaDestino); //seta a comanda destino do pedido
+                RetrofitConfig.getComanditAPI().transferirPedido(pedido).enqueue(callBackPedidoUpdate);
+            } else {
+                Messages.showDialogMessage(getContext(), getString(R.string.msgPedidoComandasIguaisSelecionadas));
+            }
+        });
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.btnCancelar), (dialog2, which) -> dialog2.dismiss());
+        dialog.show();
     }
 
     private AlertDialog createGenericDialog(String title, String message){

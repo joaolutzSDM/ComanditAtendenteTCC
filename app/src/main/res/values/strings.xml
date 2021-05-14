@@ -109,5 +109,6 @@
     <string name="rlPrecoProduto">Preço Produto</string>
     <string name="consultar_pedidos">Consultar pedidos da comanda</string>
     <string name="carregando_configuracao">Carregando configurações</string>
+    <string name="carregando_comandas_mesa">Carregando comandas da mesa</string>
 
 </resources>
