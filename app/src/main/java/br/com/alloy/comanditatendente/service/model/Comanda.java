@@ -2,7 +2,6 @@ package br.com.alloy.comanditatendente.service.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.StringJoiner;
 
 public class Comanda implements Serializable {
 
@@ -95,6 +94,11 @@ public class Comanda implements Serializable {
         if (idComanda == null) {
             return other.idComanda == null;
         } else return idComanda.equals(other.idComanda);
+    }
+
+    @Override
+    public String toString() {
+        return idComanda.toString();
     }
 
     /**

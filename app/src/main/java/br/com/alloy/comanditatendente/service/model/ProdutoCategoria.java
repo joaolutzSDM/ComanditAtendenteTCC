@@ -61,8 +61,7 @@ public class ProdutoCategoria implements Serializable {
     }
     @Override
     public String toString() {
-        return "ProdutoCategoria [idProdutoCategoria=" + idProdutoCategoria + ", nomeCategoria=" + nomeCategoria
-                + ", nomeCategoriaCardapio=" + nomeCategoriaCardapio + ", ativo=" + ativo + "]";
+        return nomeCategoria;
     }
 
 }

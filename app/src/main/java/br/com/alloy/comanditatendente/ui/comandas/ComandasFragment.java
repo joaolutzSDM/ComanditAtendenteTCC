@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import br.com.alloy.comanditatendente.R;
 import br.com.alloy.comanditatendente.databinding.FragmentComandasBinding;
@@ -65,10 +67,12 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
         bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
         setHasOptionsMenu(true);
+        Log.e("TESTE", "onCreateView: ComandaFragment");
         return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        Log.e("TESTE", "onViewCreated: ComandaFragment");
         super.onViewCreated(view, savedInstanceState);
         if(comandasViewModel.getQtdMesas().getValue() == null) {
             carregarQtdeMesas();
@@ -76,6 +80,13 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             setViewModelObserversAndListeners();
             carregarComandas(ComandaFilter.TODAS);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.e("TESTE", "onDestroyView: ComandaFragment");
+        super.onDestroyView();
+        binding = null;
     }
 
     private void carregarQtdeMesas() {
@@ -112,9 +123,10 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             //vai para a tela de pedidos com a comanda atual selecionada
             bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos).setTitle(String.format(
                     getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
-            bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
-            NavController navController = NavHostFragment.findNavController(ComandasFragment.this);
-            navController.navigate(R.id.navigation_pedidos);
+            //bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
+
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.navigation_pedidos);
+            //navController.navigate(R.id.navigation_pedidos);
         });
         comandasViewModel.getMesa().observe(getViewLifecycleOwner(), mesa -> {
             binding.fabSelecionarMesa.setImageBitmap(textAsBitmap(mesa.toString()));
@@ -254,8 +266,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             List<CharSequence> options = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.comandaManagement)));
             options.add(getString(R.string.comanda_gerenciar_item_fechar));
 //            TODO - ANALISAR IMPLEMENTAÇÃO DA QUANTIDADE DE PEDIDOS DE UMA COMANDA (NECESSÁRIO?)
-//            options.add(comanda.hasOrders() ? getString(R.string.comanda_gerenciar_item_cupom_fiscal)
-//                    : getString(R.string.comanda_gerenciar_item_fechar));
+            options.add(getString(R.string.comanda_gerenciar_item_cupom_fiscal));
             gerenciarComanda(comanda, options);
         } else {
             if(comandasViewModel.isMesaSelected()) { //se foi selecionada uma mesa

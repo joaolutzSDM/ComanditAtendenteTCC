@@ -58,14 +58,22 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
         comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
         setHasOptionsMenu(true);
+        Log.e("TESTE", "onCreateView: PedidoFragment");
         return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        Log.e("TESTE", "onViewCreated: PedidoFragment");
         super.onViewCreated(view, savedInstanceState);
         setViewModelObserversAndListeners();
         binding.rcvPedidosProdutos.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         carregarCategorias();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void setViewModelObserversAndListeners() {
