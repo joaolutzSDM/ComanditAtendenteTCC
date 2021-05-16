@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.List;
-import java.util.Objects;
 
 import br.com.alloy.comanditatendente.service.model.Comanda;
 
@@ -15,13 +14,14 @@ public class ComandasViewModel extends ViewModel {
     private MutableLiveData<Comanda> comanda;
     private MutableLiveData<Integer> mesa;
     private MutableLiveData<Integer> qtdMesas;
-    private CharSequence[] mesas;
+    private MutableLiveData<CharSequence[]> mesas;
 
     public ComandasViewModel() {
         comandas = new MutableLiveData<>();
         comanda = new MutableLiveData<>();
         mesa = new MutableLiveData<>();
         qtdMesas = new MutableLiveData<>();
+        mesas = new MutableLiveData<>();
     }
 
     public LiveData<List<Comanda>> getComandas() {
@@ -65,11 +65,11 @@ public class ComandasViewModel extends ViewModel {
     }
 
     public CharSequence[] getMesas() {
-        return mesas;
+        return mesas.getValue();
     }
 
     public void setMesas(CharSequence[] mesas) {
-        this.mesas = mesas;
+        this.mesas.setValue(mesas);
     }
 
     public LiveData<Integer> getQtdMesas() {

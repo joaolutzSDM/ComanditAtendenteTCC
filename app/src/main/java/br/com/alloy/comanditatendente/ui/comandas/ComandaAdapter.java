@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,6 +23,7 @@ public class ComandaAdapter extends ArrayAdapter<Comanda> {
     private final List<Comanda> comandas;
     private final Context context;
     private final ComandaClickListener listener;
+    private final SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     /**
      * @param comandas
@@ -62,10 +64,13 @@ public class ComandaAdapter extends ArrayAdapter<Comanda> {
             binding.txvNrComanda.setTypeface(null, Typeface.BOLD);
             binding.txvNrComanda.setShadowLayer(2, -1, 1, Color.DKGRAY);
             binding.txvNrMesa.setText(String.format(Locale.getDefault(),"%d", comanda.getNumeroMesa()));
-//            binding.txvQtdPedidos.setText(String.format(Locale.getDefault(),"%d",
-//                    comanda.getQtdPedidos() != null ? comanda.getQtdPedidos() : 0));
-            setVisibility(View.VISIBLE, binding.imgvMesaComanda, binding.txvNrMesa,
-                    binding.imgvShoppingCart, binding.txvQtdPedidos);
+            if(comanda.hasPedidos()) {
+                binding.horaUltimoPedido.setText(hourFormat.format(comanda.getHoraUltimoPedido()));
+                setVisibility(View.VISIBLE, binding.imgvMesaComanda, binding.txvNrMesa,
+                        binding.imgvHoraUltimoPedido, binding.horaUltimoPedido);
+            } else {
+                setVisibility(View.VISIBLE, binding.imgvMesaComanda, binding.txvNrMesa);
+            }
             //convertView.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary));
         } else {
             //TODO Ponto de verificação futura, melhoria para API >= 23 (atual é 21)
@@ -74,7 +79,7 @@ public class ComandaAdapter extends ArrayAdapter<Comanda> {
             binding.txvNrComanda.setTypeface(null, Typeface.NORMAL);
             binding.txvNrComanda.setShadowLayer(0, 0, 0, 0);
             setVisibility(View.INVISIBLE, binding.imgvMesaComanda, binding.txvNrMesa,
-                    binding.imgvShoppingCart, binding.txvQtdPedidos);
+                    binding.imgvHoraUltimoPedido, binding.horaUltimoPedido);
             //convertView.setBackgroundColor(getContext().getResources().getColor(R.color.white));
         }
 

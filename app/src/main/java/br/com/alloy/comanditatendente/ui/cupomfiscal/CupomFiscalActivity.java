@@ -20,12 +20,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.IOException;
+
 import br.com.alloy.comanditatendente.R;
 import br.com.alloy.comanditatendente.databinding.ActivityCupomFiscalBinding;
 import br.com.alloy.comanditatendente.service.RetrofitConfig;
 import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.Comanda;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -90,19 +93,23 @@ public class CupomFiscalActivity extends AppCompatActivity {
     private void carregarCupomFiscal(Comanda comanda) {
         progressDialog = ProgressDialog.show(this, getString(R.string.app_name),
                 getString(R.string.loading), true);
-        RetrofitConfig.getComanditAPI().consultarPedidosCupomFiscal(comanda).enqueue(new Callback<String>() {
+        RetrofitConfig.getComanditAPI().consultarPedidosCupomFiscal(comanda).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 progressDialog.dismiss();
-                if(response.isSuccessful()) {
-                    binding.wvCupomFiscal.loadDataWithBaseURL(null, response.body(), "text/html", "UTF-8", null);
+                if (response.isSuccessful()) {
+                    try {
+                        binding.wvCupomFiscal.loadDataWithBaseURL(null, response.body().string(), "text/html", "UTF-8", null);
+                    } catch (IOException e) {
+                        showFinishDialog(getString(R.string.erro_formatacao_cupom_fiscal));
+                    }
                 } else {
                     showAPIException(ExceptionUtils.parseException(response));
                 }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 progressDialog.dismiss();
                 showFinishDialog(null);
             }

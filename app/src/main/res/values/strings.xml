@@ -9,7 +9,7 @@
     <string name="mesaComanda">99</string>
     <string name="itemNumeroMesa">99</string>
     <string name="shoppingcart">shoppingCart</string>
-    <string name="itemQtdPedidos">99</string>
+    <string name="itemQtdPedidos">23:59</string>
     <string name="filtrar_comandas">Filtrar comandas</string>
     <string name="api_exception">Erro interno da API</string>
 
@@ -110,5 +110,6 @@
     <string name="consultar_pedidos">Consultar pedidos da comanda</string>
     <string name="carregando_configuracao">Carregando configurações</string>
     <string name="carregando_comandas_mesa">Carregando comandas da mesa</string>
+    <string name="erro_formatacao_cupom_fiscal">Erro na formatação do cupom fiscal.</string>
 
 </resources>

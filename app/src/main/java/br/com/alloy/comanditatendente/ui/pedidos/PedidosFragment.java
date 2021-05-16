@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -54,26 +53,19 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentPedidosBinding.inflate(inflater, container, false);
-        pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
-        comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
-        setHasOptionsMenu(true);
         Log.e("TESTE", "onCreateView: PedidoFragment");
+        binding = FragmentPedidosBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         Log.e("TESTE", "onViewCreated: PedidoFragment");
-        super.onViewCreated(view, savedInstanceState);
+        pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
+        comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
+        setHasOptionsMenu(true);
         setViewModelObserversAndListeners();
         binding.rcvPedidosProdutos.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         carregarCategorias();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
     private void setViewModelObserversAndListeners() {
@@ -124,12 +116,19 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
         return true;
     }
 
+    private PedidoAdapter getPedidoAdapter() {
+        return (PedidoAdapter) binding.rcvPedidosProdutos.getAdapter();
+    }
+
     private Callback<Pedido> callBackPedidoUpdate = new Callback<Pedido>() {
         @Override
         public void onResponse(Call<Pedido> call, Response<Pedido> response) {
             if(response.isSuccessful()) {
-                String message = getString(R.string.msgPedidoMensagemRetornoSucesso,
-                        Objects.requireNonNull(call.request().header("msg")));
+                String msg = Objects.requireNonNull(call.request().header("msg"));
+                if(!msg.equals("cadastrado")) {
+                    getPedidoAdapter().remove(response.body());
+                }
+                String message = getString(R.string.msgPedidoMensagemRetornoSucesso, msg);
                 Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
             } else {
                 showAPIException(ExceptionUtils.parseException(response));

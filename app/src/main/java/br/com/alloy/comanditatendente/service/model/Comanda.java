@@ -14,6 +14,7 @@ public class Comanda implements Serializable {
     private Integer numeroMesa;
     private String senhaAcessoMobile;
     private Date horaAlteracao;
+    private Date horaUltimoPedido;
 
     public Comanda() {}
 
@@ -58,12 +59,24 @@ public class Comanda implements Serializable {
         this.horaAlteracao = horaAlteracao;
     }
 
+    public Date getHoraUltimoPedido() {
+        return horaUltimoPedido;
+    }
+
+    public void setHoraUltimoPedido(Date horaUltimoPedido) {
+        this.horaUltimoPedido = horaUltimoPedido;
+    }
+
     /**
      *
      * @return o status da comanda - <b>true</b> para aberta, <b>false</b> para fechada
      */
     public boolean isOpen() {
-        return (numeroMesa != null);
+        return numeroMesa != null;
+    }
+
+    public boolean hasPedidos() {
+        return horaUltimoPedido != null;
     }
 
     /**

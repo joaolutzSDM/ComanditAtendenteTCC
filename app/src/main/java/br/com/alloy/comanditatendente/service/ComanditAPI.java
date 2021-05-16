@@ -8,6 +8,7 @@ import br.com.alloy.comanditatendente.service.model.MesaAlt;
 import br.com.alloy.comanditatendente.service.model.Pedido;
 import br.com.alloy.comanditatendente.service.model.Produto;
 import br.com.alloy.comanditatendente.service.model.ProdutoCategoria;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -76,6 +77,6 @@ public interface ComanditAPI {
     Call<Pedido> transferirPedido(@Body Pedido pedido);
 
     @POST("pedido/consultar/cupomfiscal")
-    Call<String> consultarPedidosCupomFiscal(@Body Comanda comanda);
+    Call<ResponseBody> consultarPedidosCupomFiscal(@Body Comanda comanda);
 
 }

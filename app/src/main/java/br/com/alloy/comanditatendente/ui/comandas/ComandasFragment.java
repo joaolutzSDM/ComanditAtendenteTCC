@@ -23,22 +23,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
+import br.com.alloy.comanditatendente.MainActivity;
 import br.com.alloy.comanditatendente.R;
 import br.com.alloy.comanditatendente.databinding.FragmentComandasBinding;
 import br.com.alloy.comanditatendente.service.RetrofitConfig;
@@ -63,33 +61,25 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentComandasBinding.inflate(inflater, container, false);
-        comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
-        bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-        setHasOptionsMenu(true);
         Log.e("TESTE", "onCreateView: ComandaFragment");
+        binding = FragmentComandasBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         Log.e("TESTE", "onViewCreated: ComandaFragment");
-        super.onViewCreated(view, savedInstanceState);
+        comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
+        bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+        setHasOptionsMenu(true);
         if(comandasViewModel.getQtdMesas().getValue() == null) {
-            carregarQtdeMesas();
+            carregarQtdeMesas(view);
         } else {
-            setViewModelObserversAndListeners();
+            setViewModelObserversAndListeners(view);
             carregarComandas(ComandaFilter.TODAS);
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        Log.e("TESTE", "onDestroyView: ComandaFragment");
-        super.onDestroyView();
-        binding = null;
-    }
-
-    private void carregarQtdeMesas() {
+    private void carregarQtdeMesas(View view) {
         progressDialog = ProgressDialog.show(getContext(), null,
                 getString(R.string.carregando_configuracao), true);
         RetrofitConfig.getComanditAPI().consultarConfiguracao(new Configuracao("QUANTIDADE_MESAS")).enqueue(new Callback<Configuracao>() {
@@ -98,7 +88,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
                 progressDialog.dismiss();
                 if(response.isSuccessful()) {
                     comandasViewModel.setQtdMesas(Integer.parseInt(response.body().getValorConfiguracao()));
-                    setViewModelObserversAndListeners();
+                    setViewModelObserversAndListeners(view);
                     carregarComandas(ComandaFilter.TODAS);
                 } else {
                     showAPIException(ExceptionUtils.parseException(response));
@@ -113,7 +103,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         });
     }
 
-    private void setViewModelObserversAndListeners() {
+    private void setViewModelObserversAndListeners(View view) {
         //listagem de comandas
         comandasViewModel.getComandas().observe(getViewLifecycleOwner(),
                 comandas -> binding.gdvComandas.setAdapter(new ComandaAdapter(getContext(), comandas, this)));
@@ -121,11 +111,18 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         //comanda selecionada
         comandasViewModel.getComanda().observe(getViewLifecycleOwner(), comanda -> {
             //vai para a tela de pedidos com a comanda atual selecionada
-            bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos).setTitle(String.format(
-                    getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
+            MenuItem menuItem = bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos);
+            menuItem.setTitle(String.format(getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
+            //bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos)
             //bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
+//            NavOptions.Builder builder = new NavOptions.Builder()
+//                    .setLaunchSingleTop(true);
+            //Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
 
-            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.navigation_pedidos);
+            //((MainActivity) requireActivity()).navigateToFragment(menuItem);
+
+            //NavigationUI.onNavDestinationSelected(menuItem, Navigation.findNavController(view));
+            //Navigation.findNavController(view).navigate(R.id.action_navigation_comandas_to_navigation_pedidos);
             //navController.navigate(R.id.navigation_pedidos);
         });
         comandasViewModel.getMesa().observe(getViewLifecycleOwner(), mesa -> {
@@ -266,7 +263,9 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             List<CharSequence> options = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.comandaManagement)));
             options.add(getString(R.string.comanda_gerenciar_item_fechar));
 //            TODO - ANALISAR IMPLEMENTAÇÃO DA QUANTIDADE DE PEDIDOS DE UMA COMANDA (NECESSÁRIO?)
-            options.add(getString(R.string.comanda_gerenciar_item_cupom_fiscal));
+            if (comanda.hasPedidos()) {
+                options.add(getString(R.string.comanda_gerenciar_item_cupom_fiscal));
+            }
             gerenciarComanda(comanda, options);
         } else {
             if(comandasViewModel.isMesaSelected()) { //se foi selecionada uma mesa
@@ -312,14 +311,13 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
                     showQRCodeDialog(comanda);
                     break;
                 case 4:
-                    if(options.get(which).equals(getString(R.string.comanda_gerenciar_item_cupom_fiscal))) { //Ver Cupom Fiscal
-                        Intent i = new Intent(getContext(), CupomFiscalActivity.class);
-                        i.putExtra("comanda", comanda);
-                        startActivity(i);
-                    } else if(options.get(which).equals(getString(R.string.comanda_gerenciar_item_fechar))) { //Fechar Comanda
-                        RetrofitConfig.getComanditAPI().fecharComanda(comanda).enqueue(callBackComandaUpdate);
-                    }
+                    //TODO - Implementar lógica de fechamento da comanda
+                    RetrofitConfig.getComanditAPI().fecharComanda(comanda).enqueue(callBackComandaUpdate);
                     break;
+                case 5:
+                    Intent i = new Intent(getContext(), CupomFiscalActivity.class);
+                    i.putExtra("comanda", comanda);
+                    startActivity(i);
             }
         });
     }
