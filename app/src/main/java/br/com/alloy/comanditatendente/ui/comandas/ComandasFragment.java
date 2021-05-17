@@ -1,5 +1,6 @@
 package br.com.alloy.comanditatendente.ui.comandas;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
@@ -67,6 +69,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Log.e("TESTE", "onViewCreated: ComandaFragment");
         comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
         bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
@@ -107,23 +110,9 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
         //listagem de comandas
         comandasViewModel.getComandas().observe(getViewLifecycleOwner(),
                 comandas -> binding.gdvComandas.setAdapter(new ComandaAdapter(getContext(), comandas, this)));
-
-        //comanda selecionada
         comandasViewModel.getComanda().observe(getViewLifecycleOwner(), comanda -> {
-            //vai para a tela de pedidos com a comanda atual selecionada
-            MenuItem menuItem = bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos);
-            menuItem.setTitle(String.format(getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
-            //bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos)
-            //bottomNavigationView.setSelectedItemId(R.id.navigation_pedidos);
-//            NavOptions.Builder builder = new NavOptions.Builder()
-//                    .setLaunchSingleTop(true);
-            //Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
-
-            //((MainActivity) requireActivity()).navigateToFragment(menuItem);
-
-            //NavigationUI.onNavDestinationSelected(menuItem, Navigation.findNavController(view));
-            //Navigation.findNavController(view).navigate(R.id.action_navigation_comandas_to_navigation_pedidos);
-            //navController.navigate(R.id.navigation_pedidos);
+            bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos).setTitle(
+                    String.format(getString(R.string.pedidos_comanda_title), comanda.getIdComanda()));
         });
         comandasViewModel.getMesa().observe(getViewLifecycleOwner(), mesa -> {
             binding.fabSelecionarMesa.setImageBitmap(textAsBitmap(mesa.toString()));
@@ -281,6 +270,7 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
     public boolean comandaLongClicked(Comanda comanda) {
         if(comanda.isOpen()) {
             comandasViewModel.setComanda(comanda);
+            bottomNavigationView.setSelectedItemId(bottomNavigationView.getMenu().findItem(R.id.navigation_pedidos).getItemId());
         } else {
             Toast.makeText(getContext(), R.string.msgComandaFechada, Toast.LENGTH_SHORT).show();
         }

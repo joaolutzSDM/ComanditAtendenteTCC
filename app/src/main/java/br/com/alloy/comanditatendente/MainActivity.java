@@ -1,7 +1,9 @@
 package br.com.alloy.comanditatendente;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,7 +19,7 @@ import br.com.alloy.comanditatendente.databinding.ActivityMainBinding;
 import br.com.alloy.comanditatendente.service.RetrofitConfig;
 import br.com.alloy.comanditatendente.ui.comandas.ComandasViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  Runnable {
 
     private NavController navController;
 
@@ -36,12 +38,15 @@ public class MainActivity extends AppCompatActivity {
         //Removido método que sincronizava o bottomNavigation com o ActionBar do aplicativo
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        Handler handler = new Handler(); //contador de tempo
+        handler.postDelayed(this, 2000); //o exemplo 2000 = 2 segundos
+
     }
 
-    public void navigateToFragment(MenuItem menuItem) {
-        NavigationUI.onNavDestinationSelected(menuItem, navController);
-//        Navigation.findNavController(this, R.id.nav_host_fragment);
-//        Navigation.findNavController(view).navigate(R.id.action_navigation_comandas_to_navigation_pedidos);
+    @Override
+    public void run() {
+        Toast.makeText(this, "Executou o timer", Toast.LENGTH_SHORT).show();
     }
 
 }

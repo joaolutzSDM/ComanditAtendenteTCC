@@ -9,31 +9,12 @@
         android:id="@+id/navigation_comandas"
         android:name="br.com.alloy.comanditatendente.ui.comandas.ComandasFragment"
         android:label="@string/title_comanda"
-        tools:layout="@layout/fragment_comandas" >
-        <action
-            android:id="@+id/action_navigation_comandas_to_navigation_pedidos"
-            app:destination="@id/navigation_pedidos"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:launchSingleTop="false"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"
-            app:popUpTo="@id/navigation_comandas"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_comandas" />
 
     <fragment
         android:id="@+id/navigation_pedidos"
         android:name="br.com.alloy.comanditatendente.ui.pedidos.PedidosFragment"
         android:label="@string/title_pedidos"
-        tools:layout="@layout/fragment_pedidos" >
-        <action
-            android:id="@+id/action_navigation_pedidos_to_navigation_comandas"
-            app:destination="@id/navigation_comandas"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-    </fragment>
+        tools:layout="@layout/fragment_pedidos" />
 
 </navigation>
