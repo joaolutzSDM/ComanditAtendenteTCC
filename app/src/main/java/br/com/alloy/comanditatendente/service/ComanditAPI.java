@@ -3,6 +3,7 @@ package br.com.alloy.comanditatendente.service;
 import java.util.List;
 
 import br.com.alloy.comanditatendente.service.model.Comanda;
+import br.com.alloy.comanditatendente.service.model.ComandaMensagem;
 import br.com.alloy.comanditatendente.service.model.Configuracao;
 import br.com.alloy.comanditatendente.service.model.MesaAlt;
 import br.com.alloy.comanditatendente.service.model.Pedido;
@@ -13,8 +14,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.HEAD;
-import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -44,6 +43,9 @@ public interface ComanditAPI {
 
     @PUT("comanda/alterarMesa")
     Call<String> alterarMesa(@Body MesaAlt mesaAlt);
+
+    @POST("comanda/cancelar/mensagem")
+    Call<ResponseBody> cancelarMensagemComanda(@Body ComandaMensagem mensagem);
 
     //-----Configuração-----
 

@@ -111,5 +111,6 @@
     <string name="carregando_configuracao">Carregando configurações</string>
     <string name="carregando_comandas_mesa">Carregando comandas da mesa</string>
     <string name="erro_formatacao_cupom_fiscal">Erro na formatação do cupom fiscal.</string>
+    <string name="notification_title">Comanda chamando!</string>
 
 </resources>
