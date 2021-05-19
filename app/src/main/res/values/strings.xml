@@ -25,12 +25,12 @@
         <item>Ver senha de acesso</item>
         <item>Compartilhar senha de acesso</item>
         <item>Gerar QR Code da senha de acesso</item>
+        <item>Fechar comanda</item>
     </array>
 
     <!-- Gerenciamento de Comandas -->
     <string name="menu_comanda">Filtrar comandas</string>
     <string name="comanda_gerenciar_item_cupom_fiscal">Ver Cupom Não Fiscal</string>
-    <string name="comanda_gerenciar_item_fechar">Fechar Comanda</string>
     <string name="comanda_gerenciar_sam">Senha de acesso mobile: %s</string>
     <string name="comanda_share_sam_title">Escolha a forma de envio</string>
     <string name="comanda_share_sam_subject">Comandit | Senha de acesso mobile | Comanda %d</string>

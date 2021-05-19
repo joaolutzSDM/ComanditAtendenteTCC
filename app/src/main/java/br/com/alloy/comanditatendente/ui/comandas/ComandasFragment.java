@@ -250,8 +250,6 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
     public void comandaClicked(Comanda comanda) {
         if(comanda.isOpen()) {
             List<CharSequence> options = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.comandaManagement)));
-            options.add(getString(R.string.comanda_gerenciar_item_fechar));
-//            TODO - ANALISAR IMPLEMENTAÇÃO DA QUANTIDADE DE PEDIDOS DE UMA COMANDA (NECESSÁRIO?)
             if (comanda.hasPedidos()) {
                 options.add(getString(R.string.comanda_gerenciar_item_cupom_fiscal));
             }

@@ -44,8 +44,11 @@ public interface ComanditAPI {
     @PUT("comanda/alterarMesa")
     Call<String> alterarMesa(@Body MesaAlt mesaAlt);
 
-    @POST("comanda/cancelar/mensagem")
+    @POST("comanda/mensagem/cancelar")
     Call<ResponseBody> cancelarMensagemComanda(@Body ComandaMensagem mensagem);
+
+    @POST("comanda/mensagem/consultar")
+    Call<List<ComandaMensagem>> consultarMensagensComandas(@Body ComandaMensagem mensagem);
 
     //-----Configuração-----
 

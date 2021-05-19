@@ -39,9 +39,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements  Runnable {
 
-    private NavController navController;
     NotificationManager mNotificationManager;
-    private TimerTask timerTask;
     private Timer timer;
 
     @Override
@@ -55,35 +53,24 @@ public class MainActivity extends AppCompatActivity implements  Runnable {
         // menu should be considered as top level destinations.
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
-        navController = Objects.requireNonNull(navHostFragment).getNavController();
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         //Removido método que sincronizava o bottomNavigation com o ActionBar do aplicativo
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
         timer = new Timer("Notification Timer");
         Handler handler = new Handler(); //contador de tempo
         //cria o timer para consulta de notificações
-        timerTask = new TimerTask() {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 handler.post(this);
             }
-        };
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        timer.schedule(timerTask, 3000, 10000);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        timerTask.cancel();
+        }, 5000, 10000);
     }
 
     @Override
     protected void onDestroy() {
+        timer.cancel();
         if(mNotificationManager != null) {
             mNotificationManager.cancelAll();
         }
