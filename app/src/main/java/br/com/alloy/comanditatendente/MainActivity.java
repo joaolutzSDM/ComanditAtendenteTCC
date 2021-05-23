@@ -37,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements  Runnable {
+public class MainActivity extends AppCompatActivity {
 
     NotificationManager mNotificationManager;
     private Timer timer;
@@ -63,7 +63,9 @@ public class MainActivity extends AppCompatActivity implements  Runnable {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                handler.post(this);
+                handler.post(() -> {
+                    timerProcess();
+                });
             }
         }, 5000, 10000);
     }
@@ -77,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements  Runnable {
         super.onDestroy();
     }
 
-    @Override
-    public void run() {
+    public void timerProcess() {
+        //TODO - Implementar ação de busca por mensagens de comandas
         Toast.makeText(this, "Executou o timer", Toast.LENGTH_SHORT).show();
     }
 

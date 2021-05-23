@@ -9,6 +9,7 @@ import br.com.alloy.comanditatendente.service.model.MesaAlt;
 import br.com.alloy.comanditatendente.service.model.Pedido;
 import br.com.alloy.comanditatendente.service.model.Produto;
 import br.com.alloy.comanditatendente.service.model.ProdutoCategoria;
+import br.com.alloy.comanditatendente.service.model.enums.TipoMensagem;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -47,8 +48,8 @@ public interface ComanditAPI {
     @POST("comanda/mensagem/cancelar")
     Call<ResponseBody> cancelarMensagemComanda(@Body ComandaMensagem mensagem);
 
-    @POST("comanda/mensagem/consultar")
-    Call<List<ComandaMensagem>> consultarMensagensComandas(@Body ComandaMensagem mensagem);
+    @POST("comanda/mensagens/consultar")
+    Call<List<ComandaMensagem>> consultarMensagensComandas(@Body List<TipoMensagem> tipos);
 
     //-----Configuração-----
 

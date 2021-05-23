@@ -1,6 +1,5 @@
 package br.com.alloy.comanditatendente.ui.comandas;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,9 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.zxing.BarcodeFormat;
@@ -38,7 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import br.com.alloy.comanditatendente.MainActivity;
 import br.com.alloy.comanditatendente.R;
 import br.com.alloy.comanditatendente.databinding.FragmentComandasBinding;
 import br.com.alloy.comanditatendente.service.RetrofitConfig;
