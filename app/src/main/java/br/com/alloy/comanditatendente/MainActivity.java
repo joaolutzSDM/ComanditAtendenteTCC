@@ -57,6 +57,17 @@ public class MainActivity extends AppCompatActivity {
         //Removido método que sincronizava o bottomNavigation com o ActionBar do aplicativo
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (timer == null) {
+            setNotificationTimer();
+        }
+    }
+
+    private void setNotificationTimer() {
         timer = new Timer("Notification Timer");
         Handler handler = new Handler(); //contador de tempo
         //cria o timer para consulta de notificações
@@ -81,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void timerProcess() {
         //TODO - Implementar ação de busca por mensagens de comandas
-        Toast.makeText(this, "Executou o timer", Toast.LENGTH_SHORT).show();
+
     }
 
     private void createComandaNotification(ComandaMensagem comandaMensagem) {

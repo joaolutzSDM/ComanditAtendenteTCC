@@ -247,6 +247,8 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
             List<CharSequence> options = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.comandaManagement)));
             if (comanda.hasPedidos()) {
                 options.add(getString(R.string.comanda_gerenciar_item_cupom_fiscal));
+            } else {
+                options.add(getString(R.string.comanda_gerenciar_fechar_comanda));
             }
             gerenciarComanda(comanda, options);
         } else {
@@ -294,13 +296,14 @@ public class ComandasFragment extends Fragment implements ComandaClickListener {
                     showQRCodeDialog(comanda);
                     break;
                 case 4:
-                    //TODO - Implementar lógica de fechamento da comanda
-                    RetrofitConfig.getComanditAPI().fecharComanda(comanda).enqueue(callBackComandaUpdate);
+                    if(comanda.hasPedidos()) {
+                        Intent i = new Intent(getContext(), CupomFiscalActivity.class);
+                        i.putExtra("comanda", comanda);
+                        startActivity(i);
+                    } else {
+                        RetrofitConfig.getComanditAPI().fecharComanda(comanda).enqueue(callBackComandaUpdate);
+                    }
                     break;
-                case 5:
-                    Intent i = new Intent(getContext(), CupomFiscalActivity.class);
-                    i.putExtra("comanda", comanda);
-                    startActivity(i);
             }
         });
     }

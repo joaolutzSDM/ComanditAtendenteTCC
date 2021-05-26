@@ -24,14 +24,14 @@
         <item>Mudar mesa</item>
         <item>Ver senha de acesso</item>
         <item>Compartilhar senha de acesso</item>
-        <item>Gerar QR Code da senha de acesso</item>
-        <item>Fechar comanda</item>
+        <item>Gerar QR Code de acesso do cliente</item>
     </array>
 
     <!-- Gerenciamento de Comandas -->
     <string name="menu_comanda">Filtrar comandas</string>
-    <string name="comanda_gerenciar_item_cupom_fiscal">Ver Cupom Não Fiscal</string>
+    <string name="comanda_gerenciar_item_cupom_fiscal">Ver cupom não fiscal</string>
     <string name="comanda_gerenciar_sam">Senha de acesso mobile: %s</string>
+    <string name="comanda_gerenciar_fechar_comanda">Fechar comanda</string>
     <string name="comanda_share_sam_title">Escolha a forma de envio</string>
     <string name="comanda_share_sam_subject">Comandit | Senha de acesso mobile | Comanda %d</string>
     <string name="troca_mesa_sucesso">Mesa alterada com sucesso</string>
@@ -112,5 +112,6 @@
     <string name="carregando_comandas_mesa">Carregando comandas da mesa</string>
     <string name="erro_formatacao_cupom_fiscal">Erro na formatação do cupom fiscal.</string>
     <string name="notification_title">Comanda chamando!</string>
+    <string name="fechamento_escolha_forma_pagamento">Escolha a forma de pagamento</string>
 
 </resources>

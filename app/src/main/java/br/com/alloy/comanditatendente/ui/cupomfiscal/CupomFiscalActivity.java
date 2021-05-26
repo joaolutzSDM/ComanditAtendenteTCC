@@ -10,10 +10,12 @@ import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -21,6 +23,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.alloy.comanditatendente.R;
 import br.com.alloy.comanditatendente.databinding.ActivityCupomFiscalBinding;
@@ -28,6 +32,7 @@ import br.com.alloy.comanditatendente.service.RetrofitConfig;
 import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.Comanda;
+import br.com.alloy.comanditatendente.service.model.MovimentoDiarioFormaPagamento;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -79,14 +84,45 @@ public class CupomFiscalActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_fechamento_comanda, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Ação do botão Home/Up (<-)
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        // Ação do botão Home/Up (<-)
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        } else {
+            fecharComanda();
         }
-        return super.onOptionsItemSelected(item);
+        return true;
+    }
+
+    private void fecharComanda() {
+        RetrofitConfig.getComanditAPI().consultarFormasDePagamento().enqueue(new Callback<List<MovimentoDiarioFormaPagamento>>() {
+            @Override
+            public void onResponse(Call<List<MovimentoDiarioFormaPagamento>> call, Response<List<MovimentoDiarioFormaPagamento>> response) {
+                if(response.isSuccessful()) {
+                    List<MovimentoDiarioFormaPagamento> formasPagto = response.body();
+                    showListDialog(getString(R.string.fechamento_escolha_forma_pagamento), formasPagto, (dialog, which) -> {
+                        cadastrarPagamentoComanda(formasPagto.get(which));
+                    });
+                } else {
+                    showAPIException(ExceptionUtils.parseException(response));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MovimentoDiarioFormaPagamento>> call, Throwable t) {
+                showFinishDialog(null);
+            }
+        });
+    }
+
+    private void cadastrarPagamentoComanda(MovimentoDiarioFormaPagamento movimentoDiarioFormaPagamento) {
+
     }
 
     @SuppressLint("RestrictedApi")
@@ -114,6 +150,13 @@ public class CupomFiscalActivity extends AppCompatActivity {
                 showFinishDialog(null);
             }
         });
+    }
+
+    private void showListDialog(String title, List<MovimentoDiarioFormaPagamento> items, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        builder.setAdapter(new ArrayAdapter<>(this, R.layout.produto_categoria_item, items), listener);
+        builder.show();
     }
 
     private void showAPIException(APIException e) {

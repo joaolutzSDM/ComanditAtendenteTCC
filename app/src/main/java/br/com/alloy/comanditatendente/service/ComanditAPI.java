@@ -6,6 +6,7 @@ import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.ComandaMensagem;
 import br.com.alloy.comanditatendente.service.model.Configuracao;
 import br.com.alloy.comanditatendente.service.model.MesaAlt;
+import br.com.alloy.comanditatendente.service.model.MovimentoDiarioFormaPagamento;
 import br.com.alloy.comanditatendente.service.model.Pedido;
 import br.com.alloy.comanditatendente.service.model.Produto;
 import br.com.alloy.comanditatendente.service.model.ProdutoCategoria;
@@ -84,5 +85,10 @@ public interface ComanditAPI {
 
     @POST("pedido/consultar/cupomfiscal")
     Call<ResponseBody> consultarPedidosCupomFiscal(@Body Comanda comanda);
+
+    // -----Movimento Diario-----
+
+    @GET("movimentoDiario/formaPagamento/consultar")
+    Call<List<MovimentoDiarioFormaPagamento>> consultarFormasDePagamento();
 
 }

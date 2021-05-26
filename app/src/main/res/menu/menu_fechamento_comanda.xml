@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/fechar_comanda"
+        android:icon="@drawable/ic_baseline_point_of_sale_24"
+        android:title="@string/comanda_gerenciar_fechar_comanda"
+        app:showAsAction="always" />
+
+</menu>
