@@ -113,5 +113,6 @@
     <string name="erro_formatacao_cupom_fiscal">Erro na formatação do cupom fiscal.</string>
     <string name="notification_title">Comanda chamando!</string>
     <string name="fechamento_escolha_forma_pagamento">Escolha a forma de pagamento</string>
+    <string name="pagamento_registrado">Pagamento registrado com sucesso</string>
 
 </resources>

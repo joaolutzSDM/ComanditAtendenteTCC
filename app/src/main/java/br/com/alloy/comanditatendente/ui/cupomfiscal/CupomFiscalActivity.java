@@ -33,6 +33,7 @@ import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.MovimentoDiarioFormaPagamento;
+import br.com.alloy.comanditatendente.service.model.dto.ComandaPagamento;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,18 +43,19 @@ public class CupomFiscalActivity extends AppCompatActivity {
 
     private ActivityCupomFiscalBinding binding;
     private ProgressDialog progressDialog;
+    private Comanda comanda;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCupomFiscalBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        Comanda comanda = (Comanda) getIntent().getExtras().getSerializable("comanda");
-        setListeners(comanda);
-        carregarCupomFiscal(comanda);
+        comanda = (Comanda) getIntent().getExtras().getSerializable("comanda");
+        setListeners();
+        carregarCupomFiscal();
     }
 
-    private void setListeners(Comanda comanda) {
+    private void setListeners() {
         binding.wvCupomFiscal.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return false;
@@ -67,12 +69,12 @@ public class CupomFiscalActivity extends AppCompatActivity {
         });
 
         binding.fabShareCupomFiscal.setOnClickListener(view -> {
-            createWebPrintJob(comanda);
+            createWebPrintJob();
         });
     }
 
     //create a function to create the print job
-    private void createWebPrintJob(Comanda comanda) {
+    private void createWebPrintJob() {
         PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
         PrintDocumentAdapter printAdapter;
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // API 21
@@ -122,11 +124,26 @@ public class CupomFiscalActivity extends AppCompatActivity {
     }
 
     private void cadastrarPagamentoComanda(MovimentoDiarioFormaPagamento movimentoDiarioFormaPagamento) {
+        ComandaPagamento comandaPagamento = new ComandaPagamento(comanda, movimentoDiarioFormaPagamento);
+        RetrofitConfig.getComanditAPI().cadastrarPagamentoComanda(comandaPagamento).enqueue(new Callback<Comanda>() {
+            @Override
+            public void onResponse(Call<Comanda> call, Response<Comanda> response) {
+                if(response.isSuccessful()) {
+                    Toast.makeText(CupomFiscalActivity.this, R.string.pagamento_registrado, Toast.LENGTH_SHORT).show();
+                } else {
+                    showAPIException(ExceptionUtils.parseException(response));
+                }
+            }
 
+            @Override
+            public void onFailure(Call<Comanda> call, Throwable t) {
+                showFinishDialog(null);
+            }
+        });
     }
 
     @SuppressLint("RestrictedApi")
-    private void carregarCupomFiscal(Comanda comanda) {
+    private void carregarCupomFiscal() {
         progressDialog = ProgressDialog.show(this, getString(R.string.app_name),
                 getString(R.string.loading), true);
         RetrofitConfig.getComanditAPI().consultarPedidosCupomFiscal(comanda).enqueue(new Callback<ResponseBody>() {

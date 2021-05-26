@@ -41,7 +41,7 @@ import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.Configuracao;
-import br.com.alloy.comanditatendente.service.model.MesaAlt;
+import br.com.alloy.comanditatendente.service.model.dto.MesaAlt;
 import br.com.alloy.comanditatendente.ui.Messages;
 import br.com.alloy.comanditatendente.ui.cupomfiscal.CupomFiscalActivity;
 import br.com.alloy.comanditatendente.ui.util.FragmentUtil;

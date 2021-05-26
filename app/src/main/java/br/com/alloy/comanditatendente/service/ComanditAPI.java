@@ -5,7 +5,8 @@ import java.util.List;
 import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.ComandaMensagem;
 import br.com.alloy.comanditatendente.service.model.Configuracao;
-import br.com.alloy.comanditatendente.service.model.MesaAlt;
+import br.com.alloy.comanditatendente.service.model.dto.ComandaPagamento;
+import br.com.alloy.comanditatendente.service.model.dto.MesaAlt;
 import br.com.alloy.comanditatendente.service.model.MovimentoDiarioFormaPagamento;
 import br.com.alloy.comanditatendente.service.model.Pedido;
 import br.com.alloy.comanditatendente.service.model.Produto;
@@ -51,6 +52,9 @@ public interface ComanditAPI {
 
     @POST("comanda/mensagens/consultar")
     Call<List<ComandaMensagem>> consultarMensagensComandas(@Body List<TipoMensagem> tipos);
+
+    @POST("comanda/pagamento")
+    Call<Comanda> cadastrarPagamentoComanda(@Body ComandaPagamento comandaPagamento);
 
     //-----Configuração-----
 

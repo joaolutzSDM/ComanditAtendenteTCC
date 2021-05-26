@@ -1,4 +1,4 @@
-package br.com.alloy.comanditatendente.service.model;
+package br.com.alloy.comanditatendente.service.model.dto;
 
 public class MesaAlt {
 
