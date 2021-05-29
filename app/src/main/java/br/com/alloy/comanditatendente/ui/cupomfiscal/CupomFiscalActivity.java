@@ -76,12 +76,7 @@ public class CupomFiscalActivity extends AppCompatActivity {
     //create a function to create the print job
     private void createWebPrintJob() {
         PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
-        PrintDocumentAdapter printAdapter;
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // API 21
-            printAdapter = binding.wvCupomFiscal.createPrintDocumentAdapter(String.format(getString(R.string.cf_pdf_file_name), comanda.getIdComanda()));
-        } else {
-            printAdapter = binding.wvCupomFiscal.createPrintDocumentAdapter();
-        }
+        PrintDocumentAdapter printAdapter = binding.wvCupomFiscal.createPrintDocumentAdapter(String.format(getString(R.string.cf_pdf_file_name), comanda.getIdComanda()));
         printManager.print("cupomNaoFiscalPrintPDF", printAdapter, new PrintAttributes.Builder().build());
     }
 

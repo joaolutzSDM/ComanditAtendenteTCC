@@ -1,5 +1,7 @@
 package br.com.alloy.comanditatendente.service.model.dto;
 
+import java.math.BigDecimal;
+
 import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.MovimentoDiarioFormaPagamento;
 
@@ -7,6 +9,7 @@ public class ComandaPagamento {
 
     private Comanda comanda;
     private MovimentoDiarioFormaPagamento formaPagamento;
+    private BigDecimal valor;
 
     public ComandaPagamento() {}
 
@@ -29,6 +32,14 @@ public class ComandaPagamento {
 
     public void setFormaPagamento(MovimentoDiarioFormaPagamento formaPagamento) {
         this.formaPagamento = formaPagamento;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
     }
 
 }
