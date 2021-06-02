@@ -50,7 +50,7 @@ public interface ComanditAPI {
     @POST("comanda/mensagem/cancelar")
     Call<ResponseBody> cancelarMensagemComanda(@Body ComandaMensagem mensagem);
 
-    @POST("comanda/mensagens/consultar")
+    @POST("comanda/mensagem/consultar")
     Call<List<ComandaMensagem>> consultarMensagensComandas(@Body List<TipoMensagem> tipos);
 
     @POST("comanda/pagamento")

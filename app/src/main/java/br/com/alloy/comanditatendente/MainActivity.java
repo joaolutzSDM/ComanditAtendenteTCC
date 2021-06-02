@@ -8,20 +8,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
@@ -31,20 +27,18 @@ import br.com.alloy.comanditatendente.databinding.ActivityMainBinding;
 import br.com.alloy.comanditatendente.service.RetrofitConfig;
 import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
-import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.ComandaMensagem;
 import br.com.alloy.comanditatendente.service.model.enums.TipoMensagem;
-import br.com.alloy.comanditatendente.ui.comandas.ComandasViewModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
-    NotificationManager mNotificationManager;
+    private NotificationManager mNotificationManager;
     private Timer timer;
+    private final List<TipoMensagem> tiposMensagem = Collections.singletonList(TipoMensagem.CHAMAR_ATENDENTE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +89,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void consultarMensagens() {
-        RetrofitConfig.getComanditAPI().consultarMensagensComandas(Arrays.asList(TipoMensagem.CHAMAR_ATENDENTE)).enqueue(new Callback<List<ComandaMensagem>>() {
+        RetrofitConfig.getComanditAPI().consultarMensagensComandas(tiposMensagem).enqueue(new Callback<List<ComandaMensagem>>() {
             @Override
             public void onResponse(Call<List<ComandaMensagem>> call, Response<List<ComandaMensagem>> response) {
                 if(response.isSuccessful()) {
-
+                    for (ComandaMensagem comandaMensagem : response.body()) {
+                        createComandaNotification(comandaMensagem);
+                    }
                 } else {
                     showAPIException(ExceptionUtils.parseException(response));
                 }

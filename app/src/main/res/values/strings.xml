@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ComanditAtendente</string>
+    <string name="app_name">Comandit Atendente</string>
     <string name="title_comanda">Comandas</string>
     <string name="title_pedidos">Pedidos</string>
     <string name="comandit_api_url">http://workstation:3311/comandit/api/</string>

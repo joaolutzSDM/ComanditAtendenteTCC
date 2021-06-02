@@ -44,6 +44,7 @@ public class CupomFiscalActivity extends AppCompatActivity {
     private ActivityCupomFiscalBinding binding;
     private ProgressDialog progressDialog;
     private Comanda comanda;
+    private static List<MovimentoDiarioFormaPagamento> formasPagamento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,23 +99,31 @@ public class CupomFiscalActivity extends AppCompatActivity {
     }
 
     private void fecharComanda() {
-        RetrofitConfig.getComanditAPI().consultarFormasDePagamento().enqueue(new Callback<List<MovimentoDiarioFormaPagamento>>() {
-            @Override
-            public void onResponse(Call<List<MovimentoDiarioFormaPagamento>> call, Response<List<MovimentoDiarioFormaPagamento>> response) {
-                if(response.isSuccessful()) {
-                    List<MovimentoDiarioFormaPagamento> formasPagto = response.body();
-                    showListDialog(getString(R.string.fechamento_escolha_forma_pagamento), formasPagto, (dialog, which) -> {
-                        cadastrarPagamentoComanda(formasPagto.get(which));
-                    });
-                } else {
-                    showAPIException(ExceptionUtils.parseException(response));
+        if(formasPagamento == null) {
+            RetrofitConfig.getComanditAPI().consultarFormasDePagamento().enqueue(new Callback<List<MovimentoDiarioFormaPagamento>>() {
+                @Override
+                public void onResponse(Call<List<MovimentoDiarioFormaPagamento>> call, Response<List<MovimentoDiarioFormaPagamento>> response) {
+                    if(response.isSuccessful()) {
+                        formasPagamento = response.body();
+                        mostrarOpcoesPagamento();
+                    } else {
+                        showAPIException(ExceptionUtils.parseException(response));
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<MovimentoDiarioFormaPagamento>> call, Throwable t) {
-                showFinishDialog(null);
-            }
+                @Override
+                public void onFailure(Call<List<MovimentoDiarioFormaPagamento>> call, Throwable t) {
+                    showFinishDialog(null);
+                }
+            });
+        } else {
+            mostrarOpcoesPagamento();
+        }
+    }
+
+    private void mostrarOpcoesPagamento() {
+        showListDialog(getString(R.string.fechamento_escolha_forma_pagamento), formasPagamento, (dialog, which) -> {
+            cadastrarPagamentoComanda(formasPagamento.get(which));
         });
     }
 
@@ -125,6 +134,7 @@ public class CupomFiscalActivity extends AppCompatActivity {
             public void onResponse(Call<Comanda> call, Response<Comanda> response) {
                 if(response.isSuccessful()) {
                     Toast.makeText(CupomFiscalActivity.this, R.string.pagamento_registrado, Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
                     showAPIException(ExceptionUtils.parseException(response));
                 }
