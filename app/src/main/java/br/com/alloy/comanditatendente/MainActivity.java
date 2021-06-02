@@ -21,6 +21,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,11 +33,13 @@ import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.ComandaMensagem;
+import br.com.alloy.comanditatendente.service.model.enums.TipoMensagem;
 import br.com.alloy.comanditatendente.ui.comandas.ComandasViewModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 handler.post(() -> {
-                    timerProcess();
+                    consultarMensagens();
                 });
             }
         }, 5000, 10000);
@@ -90,9 +94,22 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void timerProcess() {
-        //TODO - Implementar ação de busca por mensagens de comandas
+    private void consultarMensagens() {
+        RetrofitConfig.getComanditAPI().consultarMensagensComandas(Arrays.asList(TipoMensagem.CHAMAR_ATENDENTE)).enqueue(new Callback<List<ComandaMensagem>>() {
+            @Override
+            public void onResponse(Call<List<ComandaMensagem>> call, Response<List<ComandaMensagem>> response) {
+                if(response.isSuccessful()) {
 
+                } else {
+                    showAPIException(ExceptionUtils.parseException(response));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ComandaMensagem>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void createComandaNotification(ComandaMensagem comandaMensagem) {
