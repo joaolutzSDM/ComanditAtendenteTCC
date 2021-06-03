@@ -93,8 +93,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<ComandaMensagem>> call, Response<List<ComandaMensagem>> response) {
                 if(response.isSuccessful()) {
-                    for (ComandaMensagem comandaMensagem : response.body()) {
-                        createComandaNotification(comandaMensagem);
+                    if(!response.body().isEmpty()) {
+                        for (ComandaMensagem comandaMensagem : response.body()) {
+                            createComandaNotification(comandaMensagem);
+                        }
                     }
                 } else {
                     showAPIException(ExceptionUtils.parseException(response));
@@ -121,14 +123,14 @@ public class MainActivity extends AppCompatActivity {
                         .setContentTitle(getString(R.string.notification_title))
                         .setContentText(comandaMensagem.getMensagem())
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-                        .setContentIntent(pendingIntent);
+                        .setContentIntent(pendingIntent).setPriority(1);
 
         if(mNotificationManager == null) {
             mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
 
         // mId allows you to update the notification later on.
-        mNotificationManager.notify(comandaMensagem.getIdComanda().getIdComanda(), mBuilder.build());
+        mNotificationManager.notify(comandaMensagem.getComanda().getIdComanda(), mBuilder.build());
     }
 
     @Override

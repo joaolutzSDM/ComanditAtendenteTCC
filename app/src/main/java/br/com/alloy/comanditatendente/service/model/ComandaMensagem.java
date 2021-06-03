@@ -7,13 +7,13 @@ import br.com.alloy.comanditatendente.service.model.enums.TipoMensagem;
 public class ComandaMensagem implements Serializable {
 
     private Integer idComandaMensagem;
-    private Comanda idComanda;
+    private Comanda comanda;
     private TipoMensagem tipoMensagem;
     private String mensagem;
     private Boolean recebido;
 
     public ComandaMensagem(Comanda idComanda) {
-        this.idComanda = idComanda;
+        this.comanda = idComanda;
     }
 
     public ComandaMensagem(Comanda idComanda, TipoMensagem tipoMensagem) {
@@ -36,14 +36,14 @@ public class ComandaMensagem implements Serializable {
     /**
      * @return the idComanda
      */
-    public Comanda getIdComanda() {
-        return idComanda;
+    public Comanda getComanda() {
+        return comanda;
     }
     /**
-     * @param idComanda the idComanda to set
+     * @param comanda the comanda to set
      */
-    public void setIdComanda(Comanda idComanda) {
-        this.idComanda = idComanda;
+    public void setComanda(Comanda comanda) {
+        this.comanda = comanda;
     }
     /**
      * @return the tipoMensagem
