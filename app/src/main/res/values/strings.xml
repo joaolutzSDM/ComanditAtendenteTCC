@@ -114,5 +114,6 @@
     <string name="notification_title">Comanda chamando!</string>
     <string name="fechamento_escolha_forma_pagamento">Escolha a forma de pagamento</string>
     <string name="pagamento_registrado">Pagamento registrado com sucesso</string>
+    <string name="chamado_cancelado">Chamado da comanda %d cancelado</string>
 
 </resources>

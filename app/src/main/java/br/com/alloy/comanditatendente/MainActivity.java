@@ -10,9 +10,11 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -29,6 +31,7 @@ import br.com.alloy.comanditatendente.service.exception.APIException;
 import br.com.alloy.comanditatendente.service.exception.ExceptionUtils;
 import br.com.alloy.comanditatendente.service.model.ComandaMensagem;
 import br.com.alloy.comanditatendente.service.model.enums.TipoMensagem;
+import br.com.alloy.comanditatendente.ui.comandas.ComandasViewModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,6 +39,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ActivityMainBinding binding;
+    private ComandasViewModel comandasViewModel;
     private NotificationManager mNotificationManager;
     private Timer timer;
     private final List<TipoMensagem> tiposMensagem = Collections.singletonList(TipoMensagem.CHAMAR_ATENDENTE);
@@ -43,10 +48,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         //instancia o ViewModel da comanda na classe MainActivity para estar assessível em nas telas filhas do app
         RetrofitConfig.initiateRetrofitAPI(this);
+        comandasViewModel = new ViewModelProvider(this).get(ComandasViewModel.class);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -125,35 +131,47 @@ public class MainActivity extends AppCompatActivity {
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
                         .setContentIntent(pendingIntent).setPriority(1);
 
-        if(mNotificationManager == null) {
+        if (mNotificationManager == null) {
             mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
 
         // mId allows you to update the notification later on.
-        mNotificationManager.notify(comandaMensagem.getComanda().getIdComanda(), mBuilder.build());
+        mNotificationManager.notify(getString(R.string.app_name), comandaMensagem.getComanda().getIdComanda(), mBuilder.build());
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 0) { //é o request de notificação
-            ComandaMensagem mensagem = (ComandaMensagem) data.getSerializableExtra("comandaMensagem");
-            RetrofitConfig.getComanditAPI().cancelarMensagemComanda(mensagem).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if(response.isSuccessful()) {
-                        Toast.makeText(MainActivity.this, response.body().toString(), Toast.LENGTH_SHORT).show();
-                    } else {
-                        showAPIException(ExceptionUtils.parseException(response));
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Bundle extras = intent.getExtras();
+        if (extras != null && extras.containsKey("comandaMensagem")) {
+            ComandaMensagem comandaMensagem = (ComandaMensagem) extras.getSerializable("comandaMensagem");
+            cancelarMensagem(comandaMensagem);
         }
+    }
+
+    private void cancelarMensagem(ComandaMensagem comandaMensagem) {
+        RetrofitConfig.getComanditAPI().cancelarMensagemComanda(comandaMensagem).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()) {
+                    comandasViewModel.setComanda(comandaMensagem.getComanda());
+                    if(binding.navView.getSelectedItemId() == binding.navView.getMenu().findItem(R.id.navigation_comandas).getItemId()) {
+                        binding.navView.setSelectedItemId(binding.navView.getMenu().findItem(R.id.navigation_pedidos).getItemId());
+                    }
+                    binding.navView.getMenu().findItem(R.id.navigation_pedidos).setTitle(
+                            String.format(getString(R.string.pedidos_comanda_title), comandaMensagem.getComanda().getIdComanda()));
+                    Toast.makeText(MainActivity.this, String.format(getString(R.string.chamado_cancelado),
+                            comandaMensagem.getComanda().getIdComanda()), Toast.LENGTH_SHORT).show();
+                } else {
+                    showAPIException(ExceptionUtils.parseException(response));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showAPIException(APIException e) {
