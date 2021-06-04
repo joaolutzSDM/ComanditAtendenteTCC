@@ -1,10 +1,12 @@
 package br.com.alloy.comanditatendente;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         //instancia o ViewModel da comanda na classe MainActivity para estar assessível em nas telas filhas do app
         RetrofitConfig.initiateRetrofitAPI(this);
         comandasViewModel = new ViewModelProvider(this).get(ComandasViewModel.class);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -66,9 +70,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel();
+        }
         if (timer == null) {
             setNotificationTimer();
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        CharSequence name = getString(R.string.app_name);
+        String description = getString(R.string.notification_channel_description);
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(getString(R.string.notification_channel_id), name, importance);
+        channel.setDescription(description);
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviors after this
+        mNotificationManager.createNotificationChannel(channel);
     }
 
     private void setNotificationTimer() {
@@ -124,16 +145,12 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this, "")
+                new NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
                         .setSmallIcon(R.drawable.ic_baseline_notifications_active_24)
                         .setContentTitle(getString(R.string.notification_title))
                         .setContentText(comandaMensagem.getMensagem())
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
                         .setContentIntent(pendingIntent).setPriority(1);
-
-        if (mNotificationManager == null) {
-            mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        }
 
         // mId allows you to update the notification later on.
         mNotificationManager.notify(getString(R.string.app_name), comandaMensagem.getComanda().getIdComanda(), mBuilder.build());
