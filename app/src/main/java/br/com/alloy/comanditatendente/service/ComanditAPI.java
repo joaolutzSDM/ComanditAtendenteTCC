@@ -5,18 +5,18 @@ import java.util.List;
 import br.com.alloy.comanditatendente.service.model.Comanda;
 import br.com.alloy.comanditatendente.service.model.ComandaMensagem;
 import br.com.alloy.comanditatendente.service.model.Configuracao;
-import br.com.alloy.comanditatendente.service.model.dto.ComandaPagamento;
-import br.com.alloy.comanditatendente.service.model.dto.MesaAlt;
 import br.com.alloy.comanditatendente.service.model.MovimentoDiarioFormaPagamento;
 import br.com.alloy.comanditatendente.service.model.Pedido;
 import br.com.alloy.comanditatendente.service.model.Produto;
 import br.com.alloy.comanditatendente.service.model.ProdutoCategoria;
+import br.com.alloy.comanditatendente.service.model.dto.ComandaPagamento;
+import br.com.alloy.comanditatendente.service.model.dto.MesaAlt;
 import br.com.alloy.comanditatendente.service.model.enums.TipoMensagem;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -47,7 +47,7 @@ public interface ComanditAPI {
     @PUT("comanda/alterarMesa")
     Call<String> alterarMesa(@Body MesaAlt mesaAlt);
 
-    @POST("comanda/mensagem/cancelar")
+    @HTTP(method = "DELETE", path = "comanda/mensagem/cancelar", hasBody = true)
     Call<ResponseBody> cancelarMensagemComanda(@Body ComandaMensagem mensagem);
 
     @POST("comanda/mensagem/consultar")
@@ -80,7 +80,7 @@ public interface ComanditAPI {
     Call<List<Pedido>> consultarPedidosComandaResumo(@Body Comanda comanda);
 
     @Headers("msg: cancelado")
-    @POST("pedido/cancelar")
+    @HTTP(method = "DELETE", path = "pedido/cancelar", hasBody = true)
     Call<Pedido> cancelarPedido(@Body Pedido pedido);
 
     @Headers("msg: transferido")
