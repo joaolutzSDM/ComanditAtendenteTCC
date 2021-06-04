@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
@@ -9,17 +9,17 @@
         android:layout_height="wrap_content"
         android:text="@string/txvDialogQtd"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginEnd="@dimen/item_margin_start_end"/>
+        android:layout_marginEnd="@dimen/item_margin_seletor_quantidade"/>
 
     <Button
         android:id="@+id/btnMenosQuantidade"
-        android:layout_width="60dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sinal_menos"
         android:enabled="false"
         android:textSize="22sp"
         android:layout_marginEnd="@dimen/item_margin_start_end"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+        style="@style/Widget.AppCompat.Button.Small"/>
 
     <TextView
         android:id="@+id/txvQuantidade"
@@ -31,10 +31,10 @@
 
     <Button
         android:id="@+id/btnMaisQuantidade"
-        android:layout_width="60dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sinal_mais"
         android:textSize="20sp"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+        style="@style/Widget.AppCompat.Button.Small"/>
 
 </LinearLayout>

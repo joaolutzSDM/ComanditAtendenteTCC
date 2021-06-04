@@ -53,13 +53,11 @@ public class PedidosFragment extends Fragment implements ProdutoPedidoClickListe
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        Log.e("TESTE", "onCreateView: PedidoFragment");
         binding = FragmentPedidosBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        Log.e("TESTE", "onViewCreated: PedidoFragment");
         pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
         comandasViewModel = new ViewModelProvider(requireActivity()).get(ComandasViewModel.class);
         setHasOptionsMenu(true);

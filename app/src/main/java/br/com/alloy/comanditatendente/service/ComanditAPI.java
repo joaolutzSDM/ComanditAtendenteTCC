@@ -80,7 +80,7 @@ public interface ComanditAPI {
     Call<List<Pedido>> consultarPedidosComandaResumo(@Body Comanda comanda);
 
     @Headers("msg: cancelado")
-    @DELETE("pedido/cancelar")
+    @POST("pedido/cancelar")
     Call<Pedido> cancelarPedido(@Body Pedido pedido);
 
     @Headers("msg: transferido")

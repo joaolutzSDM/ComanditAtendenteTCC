@@ -10,6 +10,7 @@
     <dimen name="recycler_item_margin_top">3dp</dimen>
     <dimen name="recycler_item_margin_bottom">3dp</dimen>
     <dimen name="item_margin_start_end">8dp</dimen>
+    <dimen name="item_margin_seletor_quantidade">10dp</dimen>
     <dimen name="nome_produto_pedido_text_size">18sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="dialog_pedido_margin_start">4dp</dimen>
